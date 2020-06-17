@@ -1,10 +1,9 @@
 from sqlalchemy.dialects.postgresql import JSONB
-from chrononaut import Versioned
 
 from .base import db, Base
 
 
-class Stock(Base, Versioned):
+class Stock(Base):
     __tablename__ = 'stock'
 
     id_stock = db.Column(db.Integer, primary_key=True)

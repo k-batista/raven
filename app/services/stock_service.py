@@ -21,7 +21,7 @@ def populate_database(ticker):
     logging.info(f'status=inital ticker={ticker}')
     stock_repository = ApplicationContext.instance().stock_repository
 
-    for days in range(50):
+    for days in range(9):
         today = str(get_business_day(get_end_trading_day(), days * -1))
 
         stock = stock_repository.find_stock_by_ticker_and_date(ticker, today)

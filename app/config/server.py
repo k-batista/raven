@@ -20,6 +20,9 @@ class Server:
 
     def __config_Flask(self):
         app = Flask(__name__)
+        url = os.getenv('DATABASE_URL')
+        if url:
+            app.config['SQLALCHEMY_DATABASE_URI'] = url
         self.__config_enviroments(app, settings.LOG_CONFIG_PATH)
         self.__config_health(app, settings.HEALTH_PATH)
         self.__config_cors(app)
