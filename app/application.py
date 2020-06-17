@@ -5,15 +5,12 @@ import gevent.monkey; gevent.monkey.patch_all()
 
 import time
 import os
-from newrelic import agent as newrelic_agent
 from flask import send_from_directory
 
 from .config.server import Server
 from .config.listener import ConfigListener
 from .infrastructure.database import db
 from .config.app_context import ApplicationContext
-
-newrelic_agent.initialize()
 
 
 def create_server():
