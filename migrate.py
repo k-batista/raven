@@ -1,3 +1,4 @@
+import os 
 from datetime import datetime
 
 from flask import Flask
@@ -10,7 +11,11 @@ from sqlalchemy.orm import MapperExtension
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://raven_adm:raven_adm@localhost:5405/db_raven'
+url = os.getenv('DATABASE_URL')
+if url:
+    app.config['SQLALCHEMY_DATABASE_URI'] = url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://raven_adm:raven_adm@localhost:5405/db_raven'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
