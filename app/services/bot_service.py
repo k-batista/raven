@@ -30,8 +30,8 @@ def send_stock_analyse(stock):
     
     message_html = format_stock(stock) + trend_str
 
-    print(message_html)
-    # bot_client.send_message(message_html)
+    # print(message_html)
+    bot_client.send_message(message_html)
 
 
 def send_trend(stocks, date):
@@ -68,8 +68,8 @@ def send_trend(stocks, date):
     # bot_client.send_message(trend_undefined)
 
 def format_stock(stock):
-    return ('<b> {0:6}</b> Abr: {1}'
-            ' Fch: {2} [{3}] {4}\n'
+    return ('<b> {0:6}</b> - {13} {4}\n '
+            '<b> Preço </b> Abr: {1} Fch: {2} [{3}]\n'
             '{5} <b>EMA 9</b> = {6:6} '
             ' {7} <b>EMA 21</b> = {8:6} '
             ' {9} <b>VWAP</b> = {10:6} '
@@ -82,4 +82,5 @@ def format_stock(stock):
                                 stock.ema_9_emoji(),stock.ema_9(),
                                 stock.ema_21_emoji(),stock.ema_21(),
                                 stock.vwap_emoji(),stock.vwap(),
-                                stock.sma_200_emoji(), stock.sma_200()))
+                                stock.sma_200_emoji(), stock.sma_200(),
+                                stock.date))
