@@ -1,7 +1,8 @@
 import logging
 
 from app.config.app_context import ApplicationContext
-from app.services.stock_service import populate_database
+from app.services.stock_service import analyze
+from app.clients.heroku_client import health
 
 
 class StockListener:
@@ -11,11 +12,13 @@ class StockListener:
 
     def schedule(self):
         self.scheduler.schedule_job(
-            self.__listen, interval=5)
+            self.__listen, interval=60)
         logging.info('Listening local Queue ')
 
     def __listen(self):
         app = ApplicationContext.instance()
         event = app.queue.get()
 
-        populate_database(event)
+        analyze(event)
+
+        health()

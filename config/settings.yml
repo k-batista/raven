@@ -7,7 +7,7 @@ default:
         algorithm: aes
         encode_algorithm: base64
         convert_to: SQL_ASCII
-    sqlalchemy_database_uri: postgresql+psycopg2://raven_adm:raven_adm@localhost:5405/db_raven
+    # sqlalchemy_database_uri: postgresql+psycopg2://raven_adm:raven_adm@localhost:5405/db_raven
     sqlalchemy_track_modifications: False
     sqlalchemy_echo: False
     http:

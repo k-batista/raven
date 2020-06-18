@@ -11,7 +11,7 @@ base_url = settings.ALPHAVANTAGE.URL
 token = settings.ALPHAVANTAGE.TOKEN
 timeout = settings.ALPHAVANTAGE.TIMEOUT
 
-cache = ExpiringDict(max_len=500, max_age_seconds=3600)
+cache = ExpiringDict(max_len=100, max_age_seconds=300)
 
 
 def get_price(ticker, time):

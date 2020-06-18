@@ -12,6 +12,8 @@ class Stock(Base):
     price_close = db.Column(db.Numeric(12, 2), nullable=False)
     price_high = db.Column(db.Numeric(12, 2), nullable=False)
     price_low = db.Column(db.Numeric(12, 2), nullable=False)
+    variation = db.Column(db.Numeric(12, 2), nullable=False)
+    volume = db.Column(db.Integer, nullable=False)
     des_date = db.Column(db.String, nullable=False)
     indicators = db.Column(JSONB, nullable=False)
 
@@ -23,14 +25,8 @@ class Stock(Base):
             price_close=dataclass.price_close,
             price_high=dataclass.price_high,
             price_low=dataclass.price_low,
+            variation=dataclass.variation,
+            volume=dataclass.volume,
             des_date=dataclass.date,
             indicators=dataclass.indicators
         )
-
-    def get_var(self, stock_old):
-        return round(
-            (((self.price_close * 100) / stock_old.price_close) - 100), 2)
-
-    def get_emoji(self, stock_old):
-        return (u"\U0001F534" if self.get_var(
-            stock_old) <= 0 else u"\U0001F535")

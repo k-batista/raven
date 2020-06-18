@@ -1,3 +1,3 @@
-from chrononaut import VersionedSQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
-db = VersionedSQLAlchemy()
+db = SQLAlchemy()

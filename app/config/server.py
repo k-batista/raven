@@ -23,6 +23,10 @@ class Server:
         url = os.getenv('DATABASE_URL')
         if url:
             app.config['SQLALCHEMY_DATABASE_URI'] = url
+        else:
+            app.config['SQLALCHEMY_DATABASE_URI'] = (
+                'postgresql+psycopg2://raven_adm:'
+                'raven_adm@localhost:5405/db_raven')
         self.__config_enviroments(app, settings.LOG_CONFIG_PATH)
         self.__config_health(app, settings.HEALTH_PATH)
         self.__config_cors(app)
