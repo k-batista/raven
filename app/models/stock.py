@@ -30,3 +30,15 @@ class Stock(Base):
             des_date=dataclass.date,
             indicators=dataclass.indicators
         )
+
+    def vwap(self):
+        return self.indicators['vwap']
+
+    def ema_9(self):
+        return self.indicators['ema_9']
+
+    def ema_21(self):
+        return self.indicators['ema_21']
+
+    def sma_200(self):
+        return self.indicators['sma_200']

@@ -42,7 +42,7 @@ class StockIndicators:
             price_open=float(stock['1. open']),
             price_close=float(stock['4. close']),
             price_high=float(stock['2. high']),
-            price_low=float(stock['2. high']),
+            price_low=float(stock['3. low']),
             volume=int(stock['5. volume']),
             variation=variation,
             date=date,

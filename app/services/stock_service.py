@@ -3,6 +3,7 @@ import logging
 from app.config.app_context import ApplicationContext
 from app.utils.business_days import get_end_trading_day
 from app.services.indicators_service import get_indicators
+from app.services.setup_service import find_setup
 from app.services import bot_service
 from app.dataclass.stock_dataclass import StockAnalyse, StockIndicators
 
@@ -32,15 +33,19 @@ def resume(tickers):
     logging.info(f'started ')
     stock_repository = ApplicationContext.instance().stock_repository
 
-    date = get_end_trading_day()
-
-    stocks = []
+    setups = dict()
     for ticker in tickers:
-        model = stock_repository.find_stock_by_ticker_and_date(
-            ticker, str(date))
-        if model:
-            stocks.append(StockIndicators.from_model(model))
+        setup = find_setup(ticker)
+        
+        if setup:
+            stocks = setups.get(setup)
+            
+            if not stocks:
+                stocks = []
 
-    bot_service.send_trend(stocks, str(date))
+            stocks.append(ticker)
+            setups[setup] = stocks
+
+    bot_service.send_setup(setups)                
 
     logging.info(f'finished ')

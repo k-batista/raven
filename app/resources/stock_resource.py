@@ -3,6 +3,7 @@ from flask import Blueprint, request
 
 from app.utils.constants import StatusCode, HttpHeaders
 from app.services import stock_service
+from app.services import setup_service
 from app.config.app_context import ApplicationContext
 from app.dataclass.stock_dataclass import StockAnalyse
 
@@ -45,3 +46,13 @@ def analyze():
         {},
         StatusCode.OK.value,
         HttpHeaders.JSON_HEADER.value)
+
+
+@bp.route("/stocks/<ticker>/setup", methods=['GET'])
+def setup(ticker):
+
+    setup_service.find_setup(ticker)
+
+    return ({},
+            StatusCode.OK.value,
+            HttpHeaders.JSON_HEADER.value)
