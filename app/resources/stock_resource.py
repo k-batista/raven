@@ -22,16 +22,6 @@ def get_stock(ticker):
         HttpHeaders.JSON_HEADER.value)
 
 
-@bp.route("/stocks/resume", methods=['POST'])
-def resume():
-
-    request_json = json.loads(request.data)
-
-    stock_service.resume(request_json['stocks'])
-
-    return ({}, StatusCode.OK.value, HttpHeaders.JSON_HEADER.value)
-
-
 @bp.route("/stocks/analyze", methods=['POST'])
 def analyze():
 
@@ -46,6 +36,16 @@ def analyze():
         {},
         StatusCode.OK.value,
         HttpHeaders.JSON_HEADER.value)
+
+
+@bp.route("/stocks/setup", methods=['POST'])
+def setups():
+
+    request_json = json.loads(request.data)
+
+    stock_service.setup(request_json['stocks'], request_json['send_message'])
+
+    return ({}, StatusCode.OK.value, HttpHeaders.JSON_HEADER.value)
 
 
 @bp.route("/stocks/<ticker>/setup", methods=['GET'])

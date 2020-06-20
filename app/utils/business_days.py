@@ -6,15 +6,20 @@ def get_end_trading_day():
     today = date.today()
     now = datetime.now()
 
+    if today.weekday() == 5:
+        today += relativedelta(days=-1)
+    elif today.weekday() == 6:
+        today += relativedelta(days=-2)
+
     return (get_business_day(today)
             if now.hour >= 18
-            else get_business_day(today, days=-1))
+            else get_business_day(today, days=1))
 
 
 def get_business_day(today, days=0):
     if days == 0:
         while not _is_business_day(today):
-            today += relativedelta(days=1)
+            today += relativedelta(days=-1)
 
         return today
 

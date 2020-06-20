@@ -75,7 +75,6 @@ def __get_daily_vwap(ticker, date):
     hour_trading_floor = 10
     for hour in range(6):
         vwap = response.get(f'{date} {hour_trading_floor + hour}:00')
-
         if not vwap:
             count = count - 1
             continue

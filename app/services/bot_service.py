@@ -4,7 +4,7 @@ from app.clients import telegram_client as bot_client
 from app.services.setup_service import find_setup
 
 
-def send_stock_analyse(stock):
+def send_stock_analyse(stock, send=True):
     logging.info(f'started {stock.ticker}')
 
     trend_str = ''
@@ -19,10 +19,14 @@ def send_stock_analyse(stock):
 
     message_html = format_stock(stock) + trend_str
 
-    # print(message_html)
-    bot_client.send_message(message_html)
+    if send:
+        bot_client.send_message(message_html)
+    else:
+        print(message_html)
+        print(find_setup(stock.ticker))
 
-def send_setup(setups):
+
+def send_setup(setups, send=True):
     logging.info(f'started')
 
     message_html = '<b>SETUPS GRÁFICO DIÁRIO</b> \n'
@@ -35,9 +39,10 @@ def send_setup(setups):
 
         message_html += '\n'
 
-   
-    # print(message_html)
-    bot_client.send_message(message_html)
+    if send:
+        bot_client.send_message(message_html)
+    else:
+        print(message_html)
 
 
 def format_stock(stock):
