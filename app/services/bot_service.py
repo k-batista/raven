@@ -50,7 +50,7 @@ def format_stock(stock):
             '\n<b> Preço </b> Abr: {1} Fch: {2} [{3} %]'
             '\n {5} <b>EMA 9</b> = {6:6} '
             '\n {7} <b>EMA 21</b> = {8:6} '
-            '\n {9} <b>VWAP</b> = {10:6} '
+            '\n {9} <b>EMA 80</b> = {10:6} '
             '\n {11} <b>SMA 200</b> = {12:6} '
             .format(stock.ticker,
                     stock.price_open,
@@ -59,6 +59,6 @@ def format_stock(stock):
                     stock.get_emoji(),
                     stock.ema_9_emoji(), stock.ema_9(),
                     stock.ema_21_emoji(), stock.ema_21(),
-                    stock.vwap_emoji(), stock.vwap(),
+                    stock.ema_80_emoji(), stock.ema_80(),
                     stock.sma_200_emoji(), stock.sma_200(),
                     stock.date))

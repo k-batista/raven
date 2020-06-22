@@ -31,8 +31,8 @@ class Stock(Base):
             indicators=dataclass.indicators
         )
 
-    def vwap(self):
-        return self.indicators['vwap']
+    def ema_80(self):
+        return self.indicators['ema_80']
 
     def ema_9(self):
         return self.indicators['ema_9']

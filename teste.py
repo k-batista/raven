@@ -45,28 +45,32 @@
 
 
 
-def ema(period, prices):
+# def ema(period, prices):
 
-    count = 1
-    multiplier = 2 / (period+1)
-    average = 0
+#     count = 1
+#     multiplier = 2 / (period+1)
+#     average = 0
     
-    for value in prices:
-        if count < period:
-            average += value
-            count += 1
-            continue
-        elif count == period:
-            average = average / (period - 1)
-            count += 1
+#     for value in prices:
+#         if count < period:
+#             average += value
+#             count += 1
+#             continue
+#         elif count == period:
+#             average = average / (period - 1)
+#             count += 1
         
-        ema = (((value - average) * multiplier) + average)
-        average = ema
-        print(ema)
+#         ema = (((value - average) * multiplier) + average)
+#         average = ema
+#         print(ema)
         
         
+# ema(9, [2.4313, 2.4845, 2.5133, 2.5022, 2.5243,2.5133, 2.4823,2.5243, 2.5133, 2.5686, 2.6329])      
+#   
 
-
-ema(9, [2.4313, 2.4845, 2.5133, 2.5022, 2.5243,2.5133, 2.4823,2.5243, 2.5133, 2.5686])        
-
+value = 10
+for x in range(value):
+    if x == 0:
+        value = 11
+    print(x)
 

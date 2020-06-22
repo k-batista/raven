@@ -32,10 +32,7 @@ class StockIndicators:
     indicators: Dict[str, float]
 
     @classmethod
-    def build(cls, ticker, stock, date, price_old, params):
-
-        variation = StockIndicators.get_var(float(stock['4. close']),
-                                            float(price_old['4. close']))
+    def build(cls, ticker, stock, date, variation, params):
 
         return cls(
             ticker=ticker,
@@ -63,11 +60,6 @@ class StockIndicators:
             indicators=model.indicators
         )
 
-    @staticmethod
-    def get_var(price, price_old):
-        return round(
-            (((price * 100) / price_old) - 100), 2)
-
     def get_emoji(self):
         return (u"\U0001F534" if self.variation <= 0 else u"\U0001F535")
 
@@ -79,16 +71,16 @@ class StockIndicators:
         return (u"\U00002B07" if self.ema_21() <= self.price_close
                 else u"\U00002B06")
 
-    def vwap_emoji(self):
-        return (u"\U00002B07" if self.vwap() <= self.price_close
+    def ema_80_emoji(self):
+        return (u"\U00002B07" if self.ema_80() <= self.price_close
                 else u"\U00002B06")
 
     def sma_200_emoji(self):
         return (u"\U00002B07" if self.sma_200() <= self.price_close
                 else u"\U00002B06")
 
-    def vwap(self):
-        return self.indicators['vwap']
+    def ema_80(self):
+        return self.indicators['ema_80']
 
     def ema_9(self):
         return self.indicators['ema_9']
@@ -100,9 +92,9 @@ class StockIndicators:
         return self.indicators['sma_200']
 
     def trend(self):
-        vwap = self.vwap()
         ema_9 = self.ema_9()
         ema_21 = self.ema_21()
+        ema_80 = self.ema_80()
 
         count_ta = 0
         count_tb = 0
@@ -122,7 +114,7 @@ class StockIndicators:
         else:
             count_tb += 1
 
-        if self.price_close >= vwap:
+        if self.price_close >= ema_80:
             count_ta += 1
         else:
             count_tb += 1

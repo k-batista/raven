@@ -75,6 +75,5 @@ def find_setup(ticker):
         match = rule.matches(stocks)
         if match:
             return rule.get_name()
-            break
 
     return None

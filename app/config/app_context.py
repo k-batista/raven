@@ -17,3 +17,6 @@ class ApplicationContext(object):
     @staticmethod
     def instance():
         return ApplicationContext.__instance
+
+    def put_queue(self, stock):
+        self.queue.put(stock)

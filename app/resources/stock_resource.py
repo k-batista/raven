@@ -16,6 +16,11 @@ def get_stock(ticker):
 
     stock = stock_service.get_stock_analysis(ticker)
 
+    if not stock:
+        return ({'message': 'Sua solicitação foi recebida e '
+                 'adicionada na fila de processamento'},
+                StatusCode.CREATED.value, HttpHeaders.JSON_HEADER.value)
+
     return (
         stock.to_json(),
         StatusCode.OK.value,
@@ -30,7 +35,7 @@ def analyze():
 
     for ticker in request_json['stocks']:
         stock = StockAnalyse.build(ticker, request_json['send_message'])
-        app.queue.put(stock)
+        app.put_queue(stock)
 
     return (
         {},

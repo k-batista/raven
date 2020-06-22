@@ -14,8 +14,11 @@ timeout = settings.ALPHAVANTAGE.TIMEOUT
 cache = ExpiringDict(max_len=100, max_age_seconds=300)
 
 
-def get_price(ticker, time):
+def get_price(ticker, time, full=False):
     url = (base_url + f'?function={time}&symbol={ticker}.SAO&apikey={token}')
+
+    if full:
+        url += '&outputsize=full'
 
     try:
         key = f'{ticker}_price'
