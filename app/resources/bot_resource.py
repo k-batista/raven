@@ -29,17 +29,19 @@ def command_help(message):
 
 @bot.message_handler(commands=['stocks'])
 def stocks(message):
-    ticker = message.text.replace('/stocks ', '')
+    ticker = message.text.replace('/stocks ', '').replace(" ", "").upper()
     stock = StockAnalyse.build(ticker, False)
     bot.send_message(
         message.chat.id,
         stock_service.analyze(stock),
         parse_mode='HTML')
+    print(message.from_user.username)
 
 
 @bot.message_handler(commands=['setups'])
 def setups(message):
     bot.send_message(message.chat.id, get_setups(), parse_mode='HTML')
+    print(message.from_user.username)
 
 
 def get_setups():
@@ -59,7 +61,7 @@ def get_setups():
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    bot.reply_to(message, message.text)
+    bot.reply_to(message, 'Não é um comando válido')
 
 
 @bp.route('/' + TOKEN, methods=['POST'])

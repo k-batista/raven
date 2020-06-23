@@ -68,9 +68,4 @@
 # ema(9, [2.4313, 2.4845, 2.5133, 2.5022, 2.5243,2.5133, 2.4823,2.5243, 2.5133, 2.5686, 2.6329])      
 #   
 
-value = 10
-for x in range(value):
-    if x == 0:
-        value = 11
-    print(x)
-
+print('/stocks  bbdc4'.replace('/stocks ', '').replace(" ", "").upper())
