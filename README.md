@@ -140,3 +140,7 @@ $ ./init.sh -format
 $ py3clean .
 ```
 
+
+## CRON 
+
+https://cron-job.org/en/members/jobs/

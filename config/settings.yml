@@ -35,6 +35,6 @@ default:
         token: 3TA2XNEK0GE3NQ8G
         timeout: 2
     telegram:
-        url: https://api.telegram.org
-        token: bot1119179717:AAHbh_7Y6vaCo2SjAcu7ITYEVaiTthiticY
+        url: https://api.telegram.org/bot
+        token: 1119179717:AAHbh_7Y6vaCo2SjAcu7ITYEVaiTthiticY
         timeout: 2

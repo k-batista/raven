@@ -12,7 +12,7 @@ timeout = settings.TELEGRAM.TIMEOUT
 
 
 def send_message(html):
-    url = f'{base_url}/{token}/sendMessage'
+    url = f'{base_url}{token}/sendMessage'
     params = {'chat_id': '@ravenspalerts', 'parse_mode': 'html',
               'text': html}
 

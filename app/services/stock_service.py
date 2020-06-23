@@ -31,30 +31,39 @@ def get_stock_analysis(ticker):
 
 def analyze(request: StockAnalyse):
     logging.info(f'started {request}')
+    try:
+        stock = get_indicators(request.ticker, get_end_trading_day())
 
-    stock = get_indicators(request.ticker, get_end_trading_day())
-
-    bot_service.send_stock_analyse(stock, request.send_message)
-
-    logging.info(f'finished {request}')
+        return bot_service.send_stock_analyse(stock, request.send_message)
+    except Exception as ex:
+        logging.exception(ex)
+        return 'Tente novamente, aconteceu um problema'
+    finally:
+        logging.info(f'finished {request}')
 
 
 def setup(tickers, send_message):
     logging.info(f'started ')
 
-    setups = dict()
-    for ticker in tickers:
-        setup = find_setup(ticker)
+    try:
+        setups = dict()
+        for ticker in tickers:
+            setup = find_setup(ticker)
 
-        if setup:
-            stocks = setups.get(setup)
+            if setup:
+                stocks = setups.get(setup)
 
-            if not stocks:
-                stocks = []
+                if not stocks:
+                    stocks = []
 
-            stocks.append(ticker)
-            setups[setup] = stocks
+                stocks.append(ticker)
+                setups[setup] = stocks
 
-    bot_service.send_setup(setups, send_message)
+        print(setups)
 
-    logging.info(f'finished ')
+        return bot_service.send_setup(setups, send_message)
+    except Exception as ex:
+        logging.exception(ex)
+        return 'Tente novamente, aconteceu um problema'
+    finally:
+        logging.info(f'finished ')

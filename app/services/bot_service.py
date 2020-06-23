@@ -1,7 +1,6 @@
 import logging
 
 from app.clients import telegram_client as bot_client
-from app.services.setup_service import find_setup
 
 
 def send_stock_analyse(stock, send=True):
@@ -21,9 +20,12 @@ def send_stock_analyse(stock, send=True):
 
     if send:
         bot_client.send_message(message_html)
+        return None
     else:
-        print(message_html)
-        print(find_setup(stock.ticker))
+        logging.info(stock.ticker)
+        # print(message_html)
+        # print(find_setup(stock.ticker))
+        return message_html
 
 
 def send_setup(setups, send=True):
@@ -41,8 +43,10 @@ def send_setup(setups, send=True):
 
     if send:
         bot_client.send_message(message_html)
+        return None
     else:
-        print(message_html)
+        # print(message_html)
+        return message_html
 
 
 def format_stock(stock):

@@ -38,6 +38,9 @@ def find_setup(ticker):
 
     list_stock = app.stock_repository.find_all_stocks_by_ticker(ticker)
 
+    if not list_stock or len(list_stock) == 0:
+        return None
+
     stocks = dict()
 
     politic = Politic()
