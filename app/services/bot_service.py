@@ -28,10 +28,10 @@ def send_stock_analyse(stock, send=True):
         return message_html
 
 
-def send_setup(setups, send=True):
+def send_setup(setups, send=True, date=''):
     logging.info(f'started')
 
-    message_html = '<b>SETUPS GRÁFICO DIÁRIO</b> \n'
+    message_html = f'<b>SETUPS GRÁFICO DIÁRIO</b> {date} \n'
     for key, stocks in setups.items():
 
         message_html += f'<b>{key}</b> \U0001F535 \n'

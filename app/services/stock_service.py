@@ -47,6 +47,8 @@ def setup(tickers, send_message):
 
     try:
         setups = dict()
+        today = str(get_end_trading_day())
+
         for ticker in tickers:
             setup = find_setup(ticker)
 
@@ -59,9 +61,7 @@ def setup(tickers, send_message):
                 stocks.append(ticker)
                 setups[setup] = stocks
 
-        print(setups)
-
-        return bot_service.send_setup(setups, send_message)
+        return bot_service.send_setup(setups, send_message, today)
     except Exception as ex:
         logging.exception(ex)
         return 'Tente novamente, aconteceu um problema'
