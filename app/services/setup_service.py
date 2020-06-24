@@ -47,6 +47,7 @@ def find_setup(ticker):
     politic.add('Possível Setup 9.1 de Compra',
                 """ stock_0_price_close >= stock_0_ema_9
         and stock_1_price_close <= stock_0_ema_9
+        and stock_2_price_close <= stock_0_ema_9
         """)
     politic.add('Possível Setup 9.2 de Compra',
                 """ stock_0_price_close < stock_1_price_low

@@ -1,6 +1,7 @@
 import logging
 
 from app.config.app_context import ApplicationContext
+from app.clients import telegram_client as bot_client
 from app.services.indicators_service import get_indicators
 from app.services.setup_service import find_setup
 from app.services import bot_service
@@ -37,6 +38,7 @@ def analyze(request: StockAnalyse):
         return bot_service.send_stock_analyse(stock, request.send_message)
     except Exception as ex:
         logging.exception(ex)
+        bot_client.send_error(f' Ticker: {request.ticker}  ERRO: {repr(ex)}')
         return 'Tente novamente, aconteceu um problema'
     finally:
         logging.info(f'finished {request}')
@@ -64,6 +66,7 @@ def setup(tickers, send_message):
         return bot_service.send_setup(setups, send_message, today)
     except Exception as ex:
         logging.exception(ex)
+        bot_client.send_error(f' Setup  ERRO: {repr(ex)}')
         return 'Tente novamente, aconteceu um problema'
     finally:
         logging.info(f'finished ')

@@ -16,7 +16,8 @@ def start(message):
         message,
         f'Olá {message.from_user.first_name}, como posso te ajudar?\n'
         "💎 /setups - envia os setups armados\n"
-        "📊 /stocks - envia os valoreas de uma ação. Ex: /stocks BBDC4 \n")
+        "📊 /stocks - envia os valoreas de uma ação. Ex: /stocks BBDC4 \n"
+        "Meu canal: https://t.me/ravenspalerts ")
 
 
 @bot.message_handler(commands=['help'])
@@ -24,7 +25,8 @@ def command_help(message):
     bot.send_message(
         message.chat.id,
         "💎 /setups - envia os setups armados\n"
-        "📊 /stocks - envia os valoreas de uma ação\n")
+        "📊 /stocks - envia os valoreas de uma ação\n"
+        "Meu canal: https://t.me/ravenspalerts ")
 
 
 @bot.message_handler(commands=['stocks'])

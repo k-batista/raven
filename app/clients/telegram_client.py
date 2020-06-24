@@ -22,3 +22,16 @@ def send_message(html):
     except ClientException as exc:
         logging.exception(exc)
         raise exc
+
+
+def send_error(html):
+    url = f'{base_url}{token}/sendMessage'
+    params = {'chat_id': '@ravenspmonitoring', 'parse_mode': 'html',
+              'text': html}
+
+    try:
+        return http_caller.get(url=url, timeout=timeout, params=params)
+
+    except ClientException as exc:
+        logging.exception(exc)
+        raise exc

@@ -48,16 +48,21 @@ def cron_analyze():
 
     app = ApplicationContext.instance()
 
-    for ticker in ["ABEV3", "AZUL4", "B3SA3", "BBAS3",
-                   "BBDC4", "BBSE3", "BIDI4", "BOVA11", "BRFS3",
-                   "BRKM5", "BRML3", "CAML3", "CCRO3", "CIEL3",
-                   "CMIG4", "COGN3", "CSAN3", "CSNA3", "CYRE3",
-                   "CVCB3", "ECOR3", "EGIE3", "ELET3", "EMBR3",
-                   "EQTL3", "GGBR4", "GOAU4", "HYPE3", "ITSA4",
-                   "ITUB4", "JBSS3", "LAME4", "LREN3", "MGLU3",
-                   "MRFG3", "PETR4", "QUAL3", "RADL3", "RAIL3",
-                   "RENT3", "SBSP3", "SUZB3", "TAEE11", "USIM5",
-                   "VALE3", "VIVT4", "VVAR3", "WEGE3", "YDUQ3"]:
+    for ticker in ["ABEV3", "AMAR3", "AZUL4", "B3SA3", "BBAS3",
+                   "BBDC4", "BBSE3", "BIDI4", "BOVA11", "BEEF3",
+                   "BRFS3", "BRKM5", "BRML3", "CAML3", "CCRO3",
+                   "CIEL3", "CMIG4", "CNTO3", "COGN3", "CSAN3",
+                   "CSNA3", "CYRE3", "CVCB3", "ECOR3", "EGIE3",
+                   "ELET3", "EMBR3", "EQTL3", "EZTC3", "FLRY3",
+                   "GFSA3", "GNDI3", "GOLL4", "GUAR3", "GGBR4",
+                   "GOAU4", "HBOR3", "HYPE3", "IRBR3", "ITSA4",
+                   "ITUB4", "JBSS3", "JHSF3", "KLBN11", "LAME4",
+                   "LINX3", "LREN3", "MGLU3", "MEAL3", "MRFG3",
+                   "ODPV3", "PETR4", "QUAL3", "RADL3", "RAIL3",
+                   "RENT3", "RAPT4", "SANB11", "SAPR4", "SMLS3",
+                   "SBSP3", "SUZB3", "TAEE11", "TASA4", "TCSA3",
+                   "UGPA3", "USIM5", "VALE3", "VIVT4", "VVAR3",
+                   "WEGE3", "WIZS3", "YDUQ3"]:
 
         stock = StockAnalyse.build(ticker, False)
         app.put_queue(stock)
@@ -71,16 +76,21 @@ def cron_analyze():
 @bp.route("/stocks/setup", methods=['GET'])
 def cron_setup():
 
-    tickers = ["ABEV3", "AZUL4", "B3SA3", "BBAS3",
-               "BBDC4", "BBSE3", "BIDI4", "BOVA11", "BRFS3",
-               "BRKM5", "BRML3", "CAML3", "CCRO3", "CIEL3",
-               "CMIG4", "COGN3", "CSAN3", "CSNA3", "CYRE3",
-               "CVCB3", "ECOR3", "EGIE3", "ELET3", "EMBR3",
-               "EQTL3", "GGBR4", "GOAU4", "HYPE3", "ITSA4",
-               "ITUB4", "JBSS3", "LAME4", "LREN3", "MGLU3",
-               "MRFG3", "PETR4", "QUAL3", "RADL3", "RAIL3",
-               "RENT3", "SBSP3", "SUZB3", "TAEE11", "USIM5",
-               "VALE3", "VIVT4", "VVAR3", "WEGE3", "YDUQ3"]
+    tickers = ["ABEV3", "AMAR3", "AZUL4", "B3SA3", "BBAS3",
+               "BBDC4", "BBSE3", "BIDI4", "BOVA11", "BEEF3",
+               "BRFS3", "BRKM5", "BRML3", "CAML3", "CCRO3",
+               "CIEL3", "CMIG4", "CNTO3", "COGN3", "CSAN3",
+               "CSNA3", "CYRE3", "CVCB3", "ECOR3", "EGIE3",
+               "ELET3", "EMBR3", "EQTL3", "EZTC3", "FLRY3",
+               "GFSA3", "GNDI3", "GOLL4", "GUAR3", "GGBR4",
+               "GOAU4", "HBOR3", "HYPE3", "IRBR3", "ITSA4",
+               "ITUB4", "JBSS3", "JHSF3", "KLBN11", "LAME4",
+               "LINX3", "LREN3", "MGLU3", "MEAL3", "MRFG3",
+               "ODPV3", "PETR4", "QUAL3", "RADL3", "RAIL3",
+               "RENT3", "RAPT4", "SANB11", "SAPR4", "SMLS3",
+               "SBSP3", "SUZB3", "TAEE11", "TASA4", "TCSA3",
+               "UGPA3", "USIM5", "VALE3", "VIVT4", "VVAR3",
+               "WEGE3", "WIZS3", "YDUQ3"]
 
     stock_service.setup(tickers, True)
 
