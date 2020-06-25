@@ -52,7 +52,7 @@ def setup(tickers, send_message):
         today = str(get_end_trading_day())
 
         for ticker in tickers:
-            setup = find_setup(ticker)
+            setup = find_setup(ticker, today)
 
             if setup:
                 stocks = setups.get(setup)

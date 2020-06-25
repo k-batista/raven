@@ -33,12 +33,20 @@ class Politic:
         return self.rules
 
 
-def find_setup(ticker):
+def find_setup(ticker, today):
     app = ApplicationContext.instance()
 
     list_stock = app.stock_repository.find_all_stocks_by_ticker(ticker)
 
-    if not list_stock or len(list_stock) == 0:
+    process = False
+    for stock in list_stock:
+        if stock.des_date == str(today):
+            if stock.ema_9():
+                process = True
+                break
+
+
+    if not list_stock or len(list_stock) == 0 or not process:
         return None
 
     stocks = dict()
@@ -72,7 +80,7 @@ def find_setup(ticker):
         """)
 
     politic.add('Possível PC de Compra',
-            """ stock_0_price_low <= stock_0_ema_21
+                """ stock_0_price_low <= stock_0_ema_21
     and stock_0_price_close <= stock_1_price_close
     and stock_1_price_close <= stock_2_price_close
     and stock_2_price_close <= stock_3_price_close

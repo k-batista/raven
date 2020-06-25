@@ -24,7 +24,6 @@ def send_stock_analyse(stock, send=True):
     else:
         logging.info(stock.ticker)
         # print(message_html)
-        # print(find_setup(stock.ticker))
         return message_html
 
 

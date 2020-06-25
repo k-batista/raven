@@ -29,9 +29,9 @@ def command_help(message):
         "Meu canal: https://t.me/ravenspalerts ")
 
 
-@bot.message_handler(commands=['stocks'])
+@bot.message_handler(commands=['stocks', 'STOCKS'])
 def stocks(message):
-    ticker = message.text.replace('/stocks ', '').replace(" ", "").upper()
+    ticker = message.text.upper().replace('/STOCKS ', '').replace(" ", "")
     stock = StockAnalyse.build(ticker, False)
     bot.send_message(
         message.chat.id,

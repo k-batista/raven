@@ -20,7 +20,7 @@ def get_indicators(ticker, date):
         ticker, str(yesterday))
 
     if stock_yesterday:
-        stock = __create_history_indicators(ticker, date)
+        stock = __create_history_indicators(ticker, date, stock_yesterday)
     else:
         stock = __create_history_indicators(ticker, date)
 
@@ -38,7 +38,7 @@ def __update_indicators(ticker, date):
     return stock
 
 
-def __create_history_indicators(ticker, date):
+def __create_history_indicators(ticker, date, stock_yesterday=None):
     stock_repository = ApplicationContext.instance().stock_repository
 
     stock = None
@@ -52,21 +52,27 @@ def __create_history_indicators(ticker, date):
             ticker, str(today))
 
         if not stock:
-            dataclass = __get_indicators(ticker, today, prices)
+            dataclass = __get_indicators(
+                ticker, today, prices, stock_yesterday)
             stock = stock_repository.create(Stock.from_dataclass(dataclass))
 
     return stock
 
 
-def __get_indicators(ticker, date, prices):
+def __get_indicators(ticker, date, prices, stock_yesterday=None):
     date_str = str(date)
 
     # Prices
     all_prices = OrderedDict(sorted(prices.items()))
     reverse_prices = OrderedDict(sorted(prices.items(), reverse=True))
 
+    if stock_yesterday:
+        price_old = float(stock_yesterday.price_close)
+    else:
+        price_old = __get_price(all_prices.get(
+            str(get_business_day(date, -1))))
+
     price = all_prices.get(date_str)
-    price_old = all_prices.get(str(get_business_day(date, -1)))
 
     # Indicators
     variation = get_var(price, price_old)
@@ -100,7 +106,7 @@ def __get_price_by_date(prices, date):
 
 def get_var(price, price_old):
     return round(
-        (((__get_price(price) * 100) / __get_price(price_old)) - 100), 2)
+        (((__get_price(price) * 100) / price_old) - 100), 2)
 
 
 def ema(period, prices):

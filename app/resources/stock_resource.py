@@ -108,13 +108,3 @@ def setups():
     stock_service.setup(request_json['stocks'], request_json['send_message'])
 
     return ({}, StatusCode.OK.value, HttpHeaders.JSON_HEADER.value)
-
-
-@bp.route("/stocks/<ticker>/setup", methods=['GET'])
-def setup(ticker):
-
-    setup_service.find_setup(ticker)
-
-    return ({},
-            StatusCode.OK.value,
-            HttpHeaders.JSON_HEADER.value)
