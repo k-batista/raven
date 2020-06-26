@@ -1,0 +1,21 @@
+-- CREATE SCHEMA IF NOT EXISTS raven 
+--   AUTHORIZATION raven_adm;
+
+-- CREATE SCHEMA IF NOT EXISTS raven
+--   AUTHORIZATION raven_adm;
+
+CREATE EXTENSION IF NOT EXISTS HSTORE ;
+
+CREATE EXTENSION pgcrypto;
+
+CREATE TABLESPACE TSDRAVEN01
+  OWNER raven_adm
+  LOCATION '/tablespace/data';
+
+CREATE TABLESPACE TSIRAVEN01
+  OWNER raven_adm
+  LOCATION '/tablespace/index';
+
+
+select pg_reload_conf();
+

@@ -36,18 +36,15 @@ $ asdf reshim python
 ## Aplicação
 - /app : arquivos da aplicação
 - /bin : utilitários para o console
+- /bin/init.sh : arquivo utilitario para: iniciar aplicação/ executar lint / executar tests
+- /bin/deploy.sh : arquivo para fazer deploy no heroku
+- /bin/migrate.py : arquivo para executar alterações DDL no banco de dados
 - /config : váriaveis de ambientes, configuração de log e arquivos de DDL
 - /docker : arquivos para criar o postgreSQL local
-- /ecs : arquivos da parametrização para as tasks do ecs
-- /jenkins : arquivos do pipeline do jenkins
-- /packages : arquivos de dependências para criar a imagem da aplicação
 - /tests : arquivos de testes
-- .bumpversion.cfg : arquivo para versionamento da aplicação
 - .dockerignore : ignore do docker
 - .gitignore : ignore do git
-- console.sh : arquivo para testes no console
 - Dockerfile : docker file para criar o container da aplicação
-- init.sh : arquivo utilitaria para: iniciar aplicação/ executar lint / executar tests
 - requirements.txt : arquivo dependências da aplicação
 
 ## Executar a aplicação
@@ -56,12 +53,6 @@ Para inicializar a aplicação
 
 ```bash
 $ ./init.sh
-```
-
-Para inicializar a aplicação e executar os testes unitários
-
-```bash
-$ ./init.sh -t
 ```
 
 Caso não consiga executar o sh acima, rodar o comando abaixo para dar permissão no arquivo sh
@@ -87,7 +78,7 @@ $ docker/start_local_database.sh build_image
 Para somente executar as migration execute 
 
 ```bash
-$ docker/start_local_database.sh migrate
+$ python bin/migrate.py db upgrade
 ```
 
 ### Configuração:
