@@ -141,4 +141,6 @@ https://cron-job.org/en/members/jobs/
 https://api.telegram.org/bot1119179717:AAHbh_7Y6vaCo2SjAcu7ITYEVaiTthiticY/setWebhook?url=https://ravensp.herokuapp.com/1119179717:AAHbh_7Y6vaCo2SjAcu7ITYEVaiTthiticY
 
 
-https://finnhub.io/dashboard
+## API Stocks Data
+- https://www.alphavantage.co/documentation/
+- https://finnhub.io/docs/api

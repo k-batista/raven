@@ -44,15 +44,19 @@ def analyze(request: StockAnalyse):
         logging.info(f'finished {request}')
 
 
-def setup(tickers, send_message):
+def search_setups(send_message):
     logging.info(f'started ')
+
+    stock_repository = ApplicationContext.instance().stock_repository
 
     try:
         setups = dict()
         today = str(get_end_trading_day())
 
+        tickers = stock_repository.find_all_tickers()
+
         for ticker in tickers:
-            setup = find_setup(ticker, today)
+            setup = find_setup(ticker[0], today)
 
             if setup:
                 stocks = setups.get(setup)
@@ -60,7 +64,7 @@ def setup(tickers, send_message):
                 if not stocks:
                     stocks = []
 
-                stocks.append(ticker)
+                stocks.append(ticker[0])
                 setups[setup] = stocks
 
         return bot_service.send_setup(setups, send_message, today)

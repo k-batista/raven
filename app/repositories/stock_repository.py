@@ -16,3 +16,8 @@ class StockRepository(RepositoryBase):
         with self.app.app_context():
             return (Stock.query.filter_by(ticker=ticker)
                     .order_by(desc(Stock.des_date)).all())
+
+    def find_all_tickers(self):
+        with self.app.app_context():
+            return (self.session().query(Stock.ticker).distinct()
+            .order_by(Stock.ticker).all())
