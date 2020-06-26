@@ -10,40 +10,54 @@ bot = telebot.TeleBot(TOKEN)
 bp = Blueprint('bot', __name__)
 
 
+menu = ("💎 /setups - Exibe todos os possíveis setups armados\n"
+        "📊 /stocks - Exibe os indicadores diários da ação. "
+        "Ex: /stocks BBDC4 \n")
+
+
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.reply_to(
         message,
         f'Olá {message.from_user.first_name}, como posso te ajudar?\n'
-        "💎 /setups - envia os setups armados\n"
-        "📊 /stocks - envia os valoreas de uma ação. Ex: /stocks BBDC4 \n"
+        f'{menu}'
         "Meu canal: https://t.me/ravenspalerts ")
 
 
 @bot.message_handler(commands=['help'])
 def command_help(message):
     bot.send_message(
-        message.chat.id,
-        "💎 /setups - envia os setups armados\n"
-        "📊 /stocks - envia os valoreas de uma ação\n"
-        "Meu canal: https://t.me/ravenspalerts ")
+        message.chat.id, menu)
 
 
 @bot.message_handler(commands=['stocks', 'STOCKS'])
 def stocks(message):
-    ticker = message.text.upper().replace('/STOCKS ', '').replace(" ", "")
+    ticker = get_ticker(message)
+
+    if ticker:
+        analyse(message)
+    else:
+        sent = bot.send_message(message.chat.id,
+                                "🔍 Envia a ação. Exemplo:  BBDC4  ou  VVAR3")
+        bot.register_next_step_handler(sent, analyse)
+
+
+def get_ticker(message):
+    return message.text.upper().replace('/STOCKS', '').replace(" ", "")
+
+
+def analyse(message):
+    ticker = get_ticker(message)
     stock = StockAnalyse.build(ticker, False)
     bot.send_message(
         message.chat.id,
         stock_service.analyze(stock),
         parse_mode='HTML')
-    print(message.from_user.username)
 
 
 @bot.message_handler(commands=['setups'])
 def setups(message):
     bot.send_message(message.chat.id, get_setups(), parse_mode='HTML')
-    print(message.from_user.username)
 
 
 def get_setups():
@@ -68,7 +82,9 @@ def get_setups():
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    bot.reply_to(message, 'Não é um comando válido')
+    bot.reply_to(
+        message,
+        'Não entendi o que você quis dizer, use o /help para te ajudar')
 
 
 @bp.route('/' + TOKEN, methods=['POST'])

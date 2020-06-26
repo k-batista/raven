@@ -45,7 +45,6 @@ def find_setup(ticker, today):
                 process = True
                 break
 
-
     if not list_stock or len(list_stock) == 0 or not process:
         return None
 
