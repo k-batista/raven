@@ -144,3 +144,12 @@ https://api.telegram.org/bot1119179717:AAHbh_7Y6vaCo2SjAcu7ITYEVaiTthiticY/setWe
 ## API Stocks Data
 - https://www.alphavantage.co/documentation/
 - https://finnhub.io/docs/api
+
+mês corrente:
+bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D05052020.ZIP
+
+últimos 12 meses:
+bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_M052020.ZIP
+
+YEAR:
+http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A2020.ZIP
