@@ -5,6 +5,7 @@ from expiringdict import ExpiringDict
 
 from app.infrastructure import http_caller
 from app.config.exception_handler import ClientException
+from app.dataclass.quote_dataclass import QuoteDataclass
 
 
 base_url = settings.ALPHAVANTAGE.URL
@@ -14,8 +15,10 @@ timeout = settings.ALPHAVANTAGE.TIMEOUT
 cache = ExpiringDict(max_len=100, max_age_seconds=300)
 
 
-def get_price(ticker, time, full=False):
-    url = (base_url + f'?function={time}&symbol={ticker}.SAO&apikey={token}')
+def get_prices(ticker, full):
+    url = (
+        base_url +
+        f'?function=TIME_SERIES_DAILY&symbol={ticker}.SAO&apikey={token}')
 
     if full:
         url += '&outputsize=full'
@@ -28,9 +31,16 @@ def get_price(ticker, time, full=False):
 
         response = (http_caller.get(url=url, timeout=timeout, parse_json=True)
                     ['Time Series (Daily)'])
-        cache[key] = response
 
-        return response
+        quotes = dict()
+
+        for date, stock in response.items():
+            quote = QuoteDataclass.from_alphavantage(ticker, stock, date)
+            if quote:
+                quotes[quote.date] = quote
+
+        cache[key] = quotes
+        return quotes
 
     except ClientException as exc:
         logging.error('Erro ao realizar consulta')

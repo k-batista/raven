@@ -145,6 +145,9 @@ https://api.telegram.org/bot1119179717:AAHbh_7Y6vaCo2SjAcu7ITYEVaiTthiticY/setWe
 - https://www.alphavantage.co/documentation/
 - https://finnhub.io/docs/api
 
+https://query1.finance.yahoo.com/v8/finance/chart/PETR4.SA?period1=-2208988800&period2=1593362928&interval=1d
+https://query1.finance.yahoo.com/v8/finance/chart/PETR4.SA?interval=1d&range=max
+
 mês corrente:
 bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D05052020.ZIP
 

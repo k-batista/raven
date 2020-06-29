@@ -1,5 +1,6 @@
-from dateutil.relativedelta import relativedelta
+import time
 from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 
 
 def get_end_trading_day():
@@ -15,6 +16,14 @@ def get_end_trading_day():
     return (get_business_day(today)
             if now.hour >= 18
             else get_business_day(today, days=-1))
+
+
+def get_timestamp(date):
+    return int(
+        time.mktime(
+            time.strptime(
+                f'{date.year}-{date.month}-{date.day} 13:00:00',
+                '%Y-%m-%d %H:%M:%S')))
 
 
 def get_business_day(today, days=0):

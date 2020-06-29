@@ -89,7 +89,8 @@ tickers = ["ABEV3", "AMAR3", "AZUL4", "B3SA3", "BBAS3",
                "UGPA3", "USIM5", "VALE3", "VIVT4", "VVAR3",
                "WEGE3", "WIZS3", "YDUQ3"]
 
-for t in tickers:
-    response = requests.get(f'https://ravensp.herokuapp.com/stocks/{t}')
-    print(response)
-    time.sleep(0.2)
+# for t in tickers:
+#     response = requests.get(f'https://ravensp.herokuapp.com/stocks/{t}')
+#     print(response)
+#     time.sleep(0.2)
+

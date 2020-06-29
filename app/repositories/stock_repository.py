@@ -20,4 +20,4 @@ class StockRepository(RepositoryBase):
     def find_all_tickers(self):
         with self.app.app_context():
             return (self.session().query(Stock.ticker).distinct()
-            .order_by(Stock.ticker).all())
+                    .order_by(Stock.ticker).all())

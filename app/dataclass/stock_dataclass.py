@@ -36,11 +36,11 @@ class StockIndicators:
 
         return cls(
             ticker=ticker,
-            price_open=float(stock['1. open']),
-            price_close=float(stock['4. close']),
-            price_high=float(stock['2. high']),
-            price_low=float(stock['3. low']),
-            volume=int(stock['5. volume']),
+            price_open=stock.price_open,
+            price_close=stock.price_close,
+            price_high=stock.price_high,
+            price_low=stock.price_low,
+            volume=stock.volume,
             variation=variation,
             date=date,
             indicators=params

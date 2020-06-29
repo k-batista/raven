@@ -12,7 +12,7 @@ class StockListener:
 
     def schedule(self):
         self.scheduler.schedule_job(
-            self.__listen, interval=25)
+            self.__listen, interval=10)
         logging.info('Listening local Queue ')
 
     def __listen(self):
