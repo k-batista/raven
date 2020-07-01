@@ -48,6 +48,9 @@ def get_ticker(message):
 
 def analyse(message):
     ticker = get_ticker(message)
+    if not ticker or len(ticker) < 3:
+        bot.send_message(message.chat.id, "Ação não encontrada")
+        return
     stock = StockAnalyse.build(ticker, False)
     bot.send_message(
         message.chat.id,

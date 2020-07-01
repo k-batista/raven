@@ -80,10 +80,14 @@ def find_setup(ticker, today):
 
     politic.add('Possível PC de Compra',
                 """ stock_0_price_low <= stock_0_ema_21
-    and stock_0_price_close <= stock_1_price_close
-    and stock_1_price_close <= stock_2_price_close
-    and stock_2_price_close <= stock_3_price_close
-    and stock_0_price_close >= stock_0_ema_21
+    and (stock_0_price_close <= stock_1_price_close
+        or stock_0_price_close <= stock_1_price_open)
+    and (stock_1_price_close <= stock_2_price_close
+        or stock_1_price_close <= stock_2_price_open)
+    and (stock_2_price_close <= stock_3_price_close
+        or stock_2_price_close <= stock_3_price_open)
+    and (stock_0_price_close >= stock_0_ema_21
+        or stock_0_price_open >= stock_0_ema_21)
     and stock_1_price_close >= stock_0_ema_21
     and stock_2_price_close >= stock_0_ema_21
     and stock_3_price_close >= stock_0_ema_21
