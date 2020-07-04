@@ -7,10 +7,10 @@ import time
 import os
 from flask import send_from_directory
 
-from .config.server import Server
-from .config.listener import ConfigListener
-from .infrastructure.database import db
-from .config.app_context import ApplicationContext
+from app.config.server import Server
+from app.config.listener import ConfigListener
+from app.infrastructure.database import db
+from app.config.app_context import ApplicationContext
 
 
 def create_server():

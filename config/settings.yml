@@ -15,21 +15,6 @@ default:
         retries: 3
         retry_codes: [500, 502, 503, 504]
         backoff_factor: 0.2
-    sqs:
-        test:
-            queue_url: https://sqs.us-east-1.amazonaws.com/898139803216/fila
-        region: us-east-1
-        polling_seconds: 2
-        messages_per_polling: 10
-        wait_time: 10
-        visibility_timeout: 10
-    kafka:
-        brokers: kafka.qa-aws.url
-        limit_topic: single-risk.offer.notification
-        group_id: raven_group
-        reset_policy: earliest
-        polling_seconds: 5
-        consumer_timeout_seconds: 2
     alphavantage:
         url: https://www.alphavantage.co/query
         token: 3TA2XNEK0GE3NQ8G
@@ -41,3 +26,10 @@ default:
     yahoo:
         url: https://query1.finance.yahoo.com/
         timeout: 2
+    heroku:
+        url: http://ravensp.herokuapp.com/
+        timeout: 2
+    count:
+        url: https://api.countapi.xyz/
+        timeout: 2
+    

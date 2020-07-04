@@ -1,9 +1,12 @@
+import gevent
+
 from dynaconf import settings
 from flask import Blueprint, request
 import telebot
 
 from app.services import stock_service
 from app.dataclass.stock_dataclass import StockAnalyse
+from app.clients import count_client
 
 TOKEN = settings.TELEGRAM.TOKEN
 bot = telebot.TeleBot(TOKEN)
@@ -32,6 +35,7 @@ def command_help(message):
 
 @bot.message_handler(commands=['stocks', 'STOCKS'])
 def stocks(message):
+    gevent.spawn(count_client.count_stocks)
     ticker = get_ticker(message)
 
     if ticker:
@@ -49,6 +53,7 @@ def get_ticker(message):
 def analyse(message):
     ticker = get_ticker(message)
     if not ticker or len(ticker) < 3:
+        gevent.spawn(count_client.count_errors)
         bot.send_message(message.chat.id, "Ação não encontrada")
         return
     stock = StockAnalyse.build(ticker, False)
@@ -60,10 +65,18 @@ def analyse(message):
 
 @bot.message_handler(commands=['setups'])
 def setups(message):
+    gevent.spawn(count_client.count_setups)
     bot.send_message(
         message.chat.id,
         stock_service.search_setups(False),
         parse_mode='HTML')
+
+
+@bot.message_handler(commands=['metrics'])
+def metrics(message):
+    bot.send_message(
+        message.chat.id,
+        count_client.metrics())
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])

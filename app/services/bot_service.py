@@ -44,7 +44,7 @@ def send_setup(setups, send=True, date=''):
         bot_client.send_message(message_html)
         return None
     else:
-        # print(message_html)
+        print(message_html)
         return message_html
 
 
