@@ -49,7 +49,8 @@ def __get_indicators(ticker, date, prices):
     reverse_prices = OrderedDict(sorted(prices.items(), reverse=True))
 
     price = all_prices.get(date_str)
-    price_old = all_prices.get(str(get_business_day(date, -1)))
+    price_old = get_price_old(all_prices, date)
+
 
     # Indicators
     variation = get_var(price, price_old)
@@ -67,6 +68,12 @@ def __get_indicators(ticker, date, prices):
 
     return stock
 
+def get_price_old(all_prices, date):
+    price = all_prices.get(str(get_business_day(date, -1)))
+    if not price:
+        return all_prices.get(str(get_business_day(date, -2)))
+    
+    return price
 
 def get_var(price, price_old):
     return round(
