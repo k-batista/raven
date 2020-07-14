@@ -8,7 +8,7 @@ from app.models.stock import Stock
 from app.dataclass.stock_dataclass import StockIndicators
 
 
-def get_indicators(ticker, date):
+def get_indicators(ticker, date, client):
     stock_repository = ApplicationContext.instance().stock_repository
 
     stock = stock_repository.find_stock_by_ticker_and_date(ticker, str(date))
@@ -16,17 +16,17 @@ def get_indicators(ticker, date):
     if stock:
         return StockIndicators.from_model(stock)
 
-    stock = __create_history_indicators(ticker, date)
+    stock = __create_history_indicators(ticker, date, client)
 
     return StockIndicators.from_model(stock)
 
 
-def __create_history_indicators(ticker, date):
+def __create_history_indicators(ticker, date, client):
     stock_repository = ApplicationContext.instance().stock_repository
 
     stock = None
 
-    prices = __get_all_prices(ticker, date)
+    prices = __get_all_prices(ticker, date, client)
 
     for days in range(9):
         today = get_business_day(get_business_day(date, -8), days)
@@ -49,8 +49,7 @@ def __get_indicators(ticker, date, prices):
     reverse_prices = OrderedDict(sorted(prices.items(), reverse=True))
 
     price = all_prices.get(date_str)
-    price_old = get_price_old(all_prices, date)
-
+    price_old = get_price_old(all_prices, ticker, date)
 
     # Indicators
     variation = get_var(price, price_old)
@@ -68,16 +67,24 @@ def __get_indicators(ticker, date, prices):
 
     return stock
 
-def get_price_old(all_prices, date):
-    price = all_prices.get(str(get_business_day(date, -1)))
-    if not price:
-        return all_prices.get(str(get_business_day(date, -2)))
-    
-    return price
+
+def get_price_old(all_prices, ticker, date):
+    stock_repository = ApplicationContext.instance().stock_repository
+
+    yesterday = str(get_business_day(date, -1))
+
+    stock = stock_repository.find_stock_by_ticker_and_date(
+        ticker, yesterday)
+
+    if stock:
+        return float(stock.price_close)
+
+    return all_prices.get(yesterday).price_close
+
 
 def get_var(price, price_old):
     return round(
-        (((price.price_close * 100) / price_old.price_close) - 100), 2)
+        (((price.price_close * 100) / price_old) - 100), 2)
 
 
 def ema(period, prices):
@@ -122,8 +129,15 @@ def sma(period, prices, date):
     return round(average / period, 2)
 
 
-def __get_all_prices(ticker, date, full=True):
-    if True:
+def __get_all_prices(ticker, date, client, full=True):
+    if 'yahoo' in client:
         return yahoo_client.get_prices(ticker, date, full)
-    else:
+    elif 'alpha' in client:
         return alphavantage_client.get_prices(ticker, full)
+    else:
+        yahoo_values = yahoo_client.get_prices(ticker, date, full)
+        alpha_values = alphavantage_client.get_prices(ticker, full)
+
+        yahoo_values.update(alpha_values)
+
+        return yahoo_values

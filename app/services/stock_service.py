@@ -30,10 +30,10 @@ def get_stock_analysis(ticker):
         logging.info(f'finished {ticker}')
 
 
-def analyze(request: StockAnalyse):
+def analyze(request: StockAnalyse, client='yahoo'):
     logging.info(f'started {request}')
     try:
-        stock = get_indicators(request.ticker, get_end_trading_day())
+        stock = get_indicators(request.ticker, get_end_trading_day(), client)
 
         return bot_service.send_stock_analyse(stock, request.send_message)
     except Exception as ex:

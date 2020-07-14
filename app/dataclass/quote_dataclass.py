@@ -24,7 +24,10 @@ class QuoteDataclass:
         price_low = quotes['low'][index]
         volume = quotes['volume'][index]
 
-        if not price_open or not price_close:
+        if not price_open:
+            price_open = price_close
+
+        if not price_close:
             return None
 
         return cls(

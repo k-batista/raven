@@ -36,7 +36,7 @@ def command_help(message):
 @bot.message_handler(commands=['stocks', 'STOCKS'])
 def stocks(message):
     gevent.spawn(count_client.count_stocks)
-    ticker = get_ticker(message)
+    ticker = get_ticker('/STOCKS', message)
 
     if ticker:
         analyse(message)
@@ -46,12 +46,12 @@ def stocks(message):
         bot.register_next_step_handler(sent, analyse)
 
 
-def get_ticker(message):
-    return message.text.upper().replace('/STOCKS', '').replace(" ", "")
+def get_ticker(function, message):
+    return message.text.upper().replace(function, '').replace(" ", "")
 
 
 def analyse(message):
-    ticker = get_ticker(message)
+    ticker = get_ticker('/STOCKS', message)
     if not ticker or len(ticker) < 3:
         gevent.spawn(count_client.count_errors)
         bot.send_message(message.chat.id, "Ação não encontrada")
@@ -60,6 +60,15 @@ def analyse(message):
     bot.send_message(
         message.chat.id,
         stock_service.analyze(stock),
+        parse_mode='HTML')
+
+
+@bot.message_handler(commands=['analyse'])
+def analyse_client(message):
+    stock = StockAnalyse.build(get_ticker('/ANALYSE', message), False)
+    bot.send_message(
+        message.chat.id,
+        stock_service.analyze(stock, client=''),
         parse_mode='HTML')
 
 
