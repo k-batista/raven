@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List
 
 from dataclasses_json import dataclass_json
 
@@ -125,3 +125,14 @@ class StockIndicators:
             return -1
 
         return 0
+
+
+@dataclass_json
+@dataclass
+class StockIndicatorsList:
+    stocks: List[StockIndicators]
+
+    @classmethod
+    def build(cls, params):
+        stocks = [StockIndicators.from_model(p) for p in params]
+        return cls(stocks)
