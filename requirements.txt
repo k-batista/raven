@@ -20,7 +20,7 @@ Flask-Script==2.0.6
 rule-engine==2.0.0
 pyTelegramBotAPI==3.7.1
 #ML
-sklearn-pandas==1.8.0
-matplotlib==2.2.5
-yfinance==0.1.54
+# sklearn-pandas==1.8.0
+# matplotlib==2.2.5
+# yfinance==0.1.54
 
