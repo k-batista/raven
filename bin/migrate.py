@@ -54,15 +54,14 @@ class Stock(Base):
 
     id_stock = db.Column(db.Integer, primary_key=True)
     ticker = db.Column(db.String, nullable=False)
-    price_open = db.Column(db.Numeric(12, 2), nullable=False)
-    price_close = db.Column(db.Numeric(12, 2), nullable=False)
-    price_high = db.Column(db.Numeric(12, 2), nullable=False)
-    price_low = db.Column(db.Numeric(12, 2), nullable=False)
-    variation = db.Column(db.Numeric(12, 2), nullable=False)
-    volume = db.Column(db.Integer, nullable=False)
-    des_date = db.Column(db.String, nullable=False)
+    time_frame = db.Column(db.String, nullable=False)
+    quote_date = db.Column(db.String, nullable=False)
+    quote = db.Column(JSONB, nullable=False)
     indicators = db.Column(JSONB, nullable=False)
 
 
 if __name__ == '__main__':
     manager.run()
+
+
+# op.execute('create schema raven')

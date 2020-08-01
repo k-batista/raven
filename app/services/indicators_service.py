@@ -1,143 +1,108 @@
-from collections import OrderedDict
+from datetime import datetime
+
 
 from app.config.app_context import ApplicationContext
-from app.clients import alphavantage_client
-from app.clients import yahoo_client
 from app.utils.business_days import get_business_day
 from app.models.stock import Stock
-from app.dataclass.stock_dataclass import StockIndicators
+from app.dataclass.stock_dataclass import StockIndicatorDataclass
+from app.services.indicators import StockIndicator
 
 
-def get_indicators(ticker, date, client):
+def generate_stock_indicators(request, date):
     stock_repository = ApplicationContext.instance().stock_repository
 
-    stock = stock_repository.find_stock_by_ticker_and_date(ticker, str(date))
+    stock = stock_repository.find_stock_by_ticker_and_timeframe_and_date(
+        request.ticker, request.time_frame, str(date))
 
     if stock:
-        return StockIndicators.from_model(stock)
+        return StockIndicatorDataclass.from_model(stock)
 
-    stock = __create_history_indicators(ticker, date, client)
+    indicator = StockIndicator(request, date)
+    stock = (__create_stock_daily(request, date, indicator)
+             if request.time_frame == 'daily'
+             else __create_stock_weekly(request, indicator))
 
-    return StockIndicators.from_model(stock)
+    return StockIndicatorDataclass.from_model(stock)
 
 
-def __create_history_indicators(ticker, date, client):
+def __create_stock_weekly(request, indicator):
     stock_repository = ApplicationContext.instance().stock_repository
+    count = 0
+    for key, value in indicator.reverse_prices.items():
+        if count == 7:
+            break
 
-    stock = None
+        count += 1
 
-    prices = __get_all_prices(ticker, date, client)
-
-    for days in range(9):
-        today = get_business_day(get_business_day(date, -8), days)
-
-        stock = stock_repository.find_stock_by_ticker_and_date(
-            ticker, str(today))
+        stock = stock_repository.find_stock_by_ticker_and_timeframe_and_date(
+            request.ticker, request.time_frame, key)
 
         if not stock:
-            dataclass = __get_indicators(ticker, today, prices)
+            dataclass = __create_stock(
+                request, datetime.strptime(
+                    key, '%Y-%m-%d').date(), indicator)
             stock = stock_repository.create(Stock.from_dataclass(dataclass))
 
     return stock
 
 
-def __get_indicators(ticker, date, prices):
-    date_str = str(date)
+def __create_stock_daily(request, date, indicator):
+    stock_repository = ApplicationContext.instance().stock_repository
 
-    # Prices
-    all_prices = OrderedDict(sorted(prices.items()))
-    reverse_prices = OrderedDict(sorted(prices.items(), reverse=True))
+    for days in range(9):
+        today = get_business_day(get_business_day(date, -8), days)
+        stock = stock_repository.find_stock_by_ticker_and_timeframe_and_date(
+            request.ticker, request.time_frame, str(today))
 
-    price = all_prices.get(date_str)
-    price_old = get_price_old(all_prices, ticker, date)
-
-    # Indicators
-    variation = get_var(price, price_old)
-    ema_9 = ema(9, all_prices.items()).get(date_str)
-    ema_21 = ema(21, all_prices.items()).get(date_str)
-    ema_80 = ema(80, all_prices.items()).get(date_str)
-    sma_9 = sma(9, reverse_prices.items(), date)
-    sma_200 = sma(200, reverse_prices.items(), date)
-
-    stock = StockIndicators.build(ticker, price, date_str,
-                                  variation,
-                                  {'ema_9': ema_9,
-                                   'ema_21': ema_21, 'ema_80': ema_80,
-                                   'sma_9': sma_9, 'sma_200': sma_200})
+        if not stock:
+            dataclass = __create_stock(request, today, indicator)
+            stock = stock_repository.create(Stock.from_dataclass(dataclass))
 
     return stock
 
 
-def get_price_old(all_prices, ticker, date):
+def __create_stock(request, date, indicator):
+    date_str = str(date)
+    price = indicator.get_price_by_date(date_str)
+    price_old = __get_price_old(indicator, request, date)
+
+    return StockIndicatorDataclass.build(
+        request, price, date_str, __get_variation(
+            price, price_old), {
+            'ema_9': indicator.get_ema(
+                9, date_str), 'ema_21': indicator.get_ema(
+                    21, date_str), 'ema_80': indicator.get_ema(
+                        80, date_str), 'sma_9': indicator.get_sma(
+                            9, date_str), 'sma_200': indicator.get_sma(
+                                200, date_str)})
+
+
+def __get_price_old(indicator, request, date):
     stock_repository = ApplicationContext.instance().stock_repository
 
     yesterday = str(get_business_day(date, -1))
 
-    stock = stock_repository.find_stock_by_ticker_and_date(
-        ticker, yesterday)
+    stock = stock_repository.find_stock_by_ticker_and_timeframe_and_date(
+        request.ticker, request.time_frame, yesterday)
 
     if stock:
-        return float(stock.price_close)
+        return float(stock.price_close())
 
-    return all_prices.get(yesterday).price_close
+    if request.time_frame == 'weekly':
+        end_week = get_business_day(date, -1)
+
+        for day in range(5):
+            end_week = get_business_day(end_week, -1)
+            stock = indicator.get_price_by_date(str(end_week))
+
+            if stock:
+                break
+
+        return stock
+
+    return indicator.get_price_by_date(yesterday)
 
 
-def get_var(price, price_old):
+def __get_variation(current, old):
     return round(
-        (((price.price_close * 100) / price_old) - 100), 2)
-
-
-def ema(period, prices):
-
-    emas = {}
-    count = 1
-    average = 0
-    multiplier = 2 / (period + 1)
-
-    for key, stock in prices:
-
-        value = stock.price_close
-
-        if count < period:
-            average += value
-            count += 1
-            continue
-        elif count == period:
-            average = average / (period - 1)
-            count += 1
-
-        ema = round((((value - average) * multiplier) + average), 2)
-        emas[key] = ema
-        average = ema
-
-    return emas
-
-
-def sma(period, prices, date):
-
-    count = 0
-    average = 0
-
-    for key, stock in prices:
-        if count == period:
-            break
-
-        if key == str(date) or count > 0:
-            count += 1
-            average += stock.price_close
-
-    return round(average / period, 2)
-
-
-def __get_all_prices(ticker, date, client, full=True):
-    if 'yahoo' in client:
-        return yahoo_client.get_prices(ticker, date, full)
-    elif 'alpha' in client:
-        return alphavantage_client.get_prices(ticker, full)
-    else:
-        yahoo_values = yahoo_client.get_prices(ticker, date, full)
-        alpha_values = alphavantage_client.get_prices(ticker, full)
-
-        yahoo_values.update(alpha_values)
-
-        return yahoo_values
+        (((current.price_close * 100) / old.price_close) - 100), 2)

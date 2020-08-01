@@ -5,22 +5,24 @@ from app.utils.constants import StatusCode, HttpHeaders
 from app.services import stock_service
 from app.config.app_context import ApplicationContext
 from app.models.stock import Stock
-from app.dataclass.stock_dataclass import StockAnalyse
-from app.dataclass.stock_dataclass import StockIndicators
-from app.dataclass.stock_dataclass import StockIndicatorsList
+from app.models.types import TimeFrame
+from app.utils.business_days import get_end_trading_day
+from app.dataclass import stock_dataclass as stock_dc
+from app.services.indicators import StockIndicator
 
 
 bp = Blueprint('stocks', __name__)
 
 
 @bp.route("/stocks/<ticker>", methods=['GET'])
-def get_stock(ticker):
+def resource_get_stock(ticker):
+    time_frame = extract_time_frame(request.args.get('time_frame'))
 
-    app = ApplicationContext.instance()
-    stock_repository = app.stock_repository
+    stock_repository = (ApplicationContext.instance()
+                        .stock_repository)
 
-    stocks = StockIndicatorsList.build(
-        stock_repository.find_all_stocks_by_ticker(ticker))
+    stocks = stock_dc.StockIndicatorListDataclass.build(
+        stock_repository.find_all_stocks_by_ticker(ticker, time_frame))
 
     return (stocks.to_json(),
             StatusCode.OK.value,
@@ -28,13 +30,13 @@ def get_stock(ticker):
 
 
 @bp.route("/stocks/<ticker>", methods=['POST'])
-def create_stock(ticker):
+def resource_create_stock(ticker):
 
-    app = ApplicationContext.instance()
-    stock_repository = app.stock_repository
+    stock_repository = (ApplicationContext.instance()
+                        .stock_repository)
 
     stock = Stock.from_dataclass(
-        StockIndicators.from_json(request.data))
+        stock_dc.StockIndicatorDataclass.from_json(request.data))
 
     stock_repository.create(stock)
 
@@ -43,10 +45,11 @@ def create_stock(ticker):
             HttpHeaders.JSON_HEADER.value)
 
 
-@bp.route("/stocks/<ticker>/analyse", methods=['GET'])
-def analyse_stock(ticker):
+@bp.route("/stocks/<ticker>/analyze", methods=['GET'])
+def resource_analyse_stock(ticker):
+    time_frame = extract_time_frame(request.args.get('time_frame'))
 
-    stock = stock_service.get_stock_analysis(ticker)
+    stock = stock_service.get_stock_analysis(ticker, time_frame)
 
     if not stock:
         return ({'message': 'Sua solicitação foi recebida e '
@@ -60,13 +63,18 @@ def analyse_stock(ticker):
 
 
 @bp.route("/stocks/analyze", methods=['POST'])
-def analyze():
-
+def resource_analyze():
     request_json = json.loads(request.data)
     app = ApplicationContext.instance()
 
+    time_frame = extract_time_frame(request_json['time_frame'])
+
     for ticker in request_json['stocks']:
-        stock = StockAnalyse.build(ticker, request_json['send_message'])
+        stock = stock_dc.StockAnalyseDataclass.build(
+            ticker,
+            time_frame,
+            request_json['send_message'],
+            'alpha')
         app.put_queue(stock)
 
     return (
@@ -76,10 +84,20 @@ def analyze():
 
 
 @bp.route("/stocks/setup", methods=['POST'])
-def setups():
-
+def resource_setups():
     request_json = json.loads(request.data)
+    time_frame = extract_time_frame(request_json['time_frame'])
 
-    stock_service.search_setups(request_json['send_message'])
+    stock_service.search_setups(time_frame, request_json['send_message'])
 
     return ({}, StatusCode.OK.value, HttpHeaders.JSON_HEADER.value)
+
+
+def extract_time_frame(time_frame):
+    if not time_frame:
+        return TimeFrame.daily.value
+
+    if time_frame not in [TimeFrame.daily.value, TimeFrame.weekly.value]:
+        return TimeFrame.daily.value
+
+    return time_frame

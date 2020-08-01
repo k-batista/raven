@@ -93,3 +93,7 @@ tickers = ["ABEV3", "AMAR3", "AZUL4", "B3SA3", "BBAS3",
 #     response = requests.get(f'https://ravensp.herokuapp.com/stocks/{t}')
 #     print(response)
 #     time.sleep(0.2)
+
+
+from datetime import datetime
+print(datetime.strptime('2020-07-31', '%Y-%m-%d').date())

@@ -15,100 +15,40 @@ timeout = settings.ALPHAVANTAGE.TIMEOUT
 cache = ExpiringDict(max_len=100, max_age_seconds=300)
 
 
-def get_prices(ticker, full):
+def get_prices(request, date, full):
+
+    time_series = 'TIME_SERIES_DAILY'
+    selector = 'Time Series (Daily)'
+    if request.time_frame == 'weekly':
+        time_series = 'TIME_SERIES_WEEKLY'
+        selector = 'Weekly Time Series'
+
     url = (
         base_url +
-        f'?function=TIME_SERIES_DAILY&symbol={ticker}.SAO&apikey={token}')
+        f'?function={time_series}&symbol={request.ticker}.SAO&apikey={token}')
 
     if full:
         url += '&outputsize=full'
 
     try:
-        key = f'{ticker}_price'
+        key = f'{request.ticker}_price'
         response_cache = cache.get(key)
         if response_cache:
             return response_cache
 
         response = (http_caller.get(url=url, timeout=timeout, parse_json=True)
-                    ['Time Series (Daily)'])
+                    [selector])
 
         quotes = dict()
 
         for date, stock in response.items():
-            quote = QuoteDataclass.from_alphavantage(ticker, stock, date)
+            quote = QuoteDataclass.from_alphavantage(
+                request.ticker, stock, date)
             if quote:
                 quotes[quote.date] = quote
 
         cache[key] = quotes
         return quotes
-
-    except ClientException as exc:
-        logging.error('Erro ao realizar consulta')
-        raise exc
-
-
-def get_ema(ticker, interval, period):
-    url = (base_url +
-           f'?function=EMA&symbol={ticker}.SAO&interval={interval}'
-           f'&time_period={period}&series_type=close&apikey={token}')
-
-    try:
-        key = f'{ticker}_ema_{period}'
-
-        response_cache = cache.get(key)
-        if response_cache:
-            return response_cache
-
-        response = (http_caller.get(url=url, timeout=timeout, parse_json=True)
-                    ['Technical Analysis: EMA'])
-        cache[key] = response
-
-        return response
-
-    except ClientException as exc:
-        logging.error('Erro ao realizar consulta')
-        raise exc
-
-
-def get_sma(ticker, interval, period):
-    url = (base_url +
-           f'?function=SMA&symbol={ticker}.SAO&interval={interval}'
-           f'&time_period={period}&series_type=close&apikey={token}')
-
-    try:
-        key = f'{ticker}_sma_{period}'
-
-        response_cache = cache.get(key)
-        if response_cache:
-            return response_cache
-
-        response = (http_caller.get(url=url, timeout=timeout, parse_json=True)
-                    ['Technical Analysis: SMA'])
-        cache[key] = response
-
-        return response
-
-    except ClientException as exc:
-        logging.error('Erro ao realizar consulta')
-        raise exc
-
-
-def get_vwap(ticker):
-    url = (base_url +
-           f'?function=VWAP&symbol={ticker}.SAO&interval=60min&apikey={token}')
-
-    try:
-        key = f'{ticker}_vwap'
-
-        response_cache = cache.get(key)
-        if response_cache:
-            return response_cache
-
-        response = (http_caller.get(url=url, timeout=timeout, parse_json=True)
-                    ['Technical Analysis: VWAP'])
-        cache[key] = response
-
-        return response
 
     except ClientException as exc:
         logging.error('Erro ao realizar consulta')

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: be0aa0bec051
+Revision ID: a118faaf13fe
 Revises: 
-Create Date: 2020-06-18 13:59:06.833468
+Create Date: 2020-08-01 11:32:44.438835
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'be0aa0bec051'
+revision = 'a118faaf13fe'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,13 +24,9 @@ def upgrade():
     sa.Column('dat_update', sa.DateTime(), nullable=False),
     sa.Column('id_stock', sa.Integer(), nullable=False),
     sa.Column('ticker', sa.String(), nullable=False),
-    sa.Column('price_open', sa.Numeric(precision=12, scale=2), nullable=False),
-    sa.Column('price_close', sa.Numeric(precision=12, scale=2), nullable=False),
-    sa.Column('price_high', sa.Numeric(precision=12, scale=2), nullable=False),
-    sa.Column('price_low', sa.Numeric(precision=12, scale=2), nullable=False),
-    sa.Column('variation', sa.Numeric(precision=12, scale=2), nullable=False),
-    sa.Column('volume', sa.Integer(), nullable=False),
-    sa.Column('des_date', sa.String(), nullable=False),
+    sa.Column('time_frame', sa.String(), nullable=False),
+    sa.Column('quote_date', sa.String(), nullable=False),
+    sa.Column('quote', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('indicators', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.PrimaryKeyConstraint('id_stock'),
     schema='raven'

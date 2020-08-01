@@ -2,14 +2,16 @@ import logging
 
 from app.config.app_context import ApplicationContext
 from app.clients import telegram_client as bot_client
-from app.services.indicators_service import get_indicators
+from app.services.indicators_service import generate_stock_indicators
 from app.services.setup_service import find_setup
 from app.services import bot_service
-from app.dataclass.stock_dataclass import StockIndicators, StockAnalyse
+from app.dataclass.stock_dataclass import StockIndicatorDataclass
+from app.dataclass.stock_dataclass import StockAnalyseDataclass
 from app.utils.business_days import get_end_trading_day
+from app.utils.constants import QuoteClient
 
 
-def get_stock_analysis(ticker):
+def get_stock_analysis(ticker, time_frame):
     try:
         logging.info(f'started {ticker}')
 
@@ -18,22 +20,24 @@ def get_stock_analysis(ticker):
 
         today = str(get_end_trading_day())
 
-        stock = stock_repository.find_stock_by_ticker_and_date(ticker, today)
+        stock = stock_repository.find_stock_by_ticker_and_timeframe_and_date(
+            ticker, time_frame, today)
 
         if stock:
-            return StockIndicators.from_model(stock)
+            return StockIndicatorDataclass.from_model(stock)
         else:
-            stock = StockAnalyse.build(ticker, False)
+            stock = StockAnalyseDataclass.build(
+                ticker, time_frame, False, QuoteClient.yahoo.value)
             app.queue.put(stock)
             return None
     finally:
         logging.info(f'finished {ticker}')
 
 
-def analyze(request: StockAnalyse, client='yahoo'):
+def analyze(request: StockAnalyseDataclass):
     logging.info(f'started {request}')
     try:
-        stock = get_indicators(request.ticker, get_end_trading_day(), client)
+        stock = generate_stock_indicators(request, get_end_trading_day())
 
         return bot_service.send_stock_analyse(stock, request.send_message)
     except Exception as ex:
@@ -44,8 +48,8 @@ def analyze(request: StockAnalyse, client='yahoo'):
         logging.info(f'finished {request}')
 
 
-def search_setups(send_message):
-    logging.info(f'started ')
+def search_setups(time_frame, send_message):
+    logging.info(f'started {time_frame}')
 
     stock_repository = ApplicationContext.instance().stock_repository
 
@@ -56,7 +60,7 @@ def search_setups(send_message):
         tickers = stock_repository.find_all_tickers()
 
         for ticker in tickers:
-            setup = find_setup(ticker[0], today)
+            setup = find_setup(ticker[0], time_frame, today)
 
             if setup:
                 stocks = setups.get(setup)
@@ -67,7 +71,7 @@ def search_setups(send_message):
                 stocks.append(ticker[0])
                 setups[setup] = stocks
 
-        return bot_service.send_setup(setups, send_message, today)
+        return bot_service.send_setup(setups, time_frame, send_message, today)
     except Exception as ex:
         logging.exception(ex)
         bot_client.send_error(f' Setup  ERRO: {repr(ex)}')

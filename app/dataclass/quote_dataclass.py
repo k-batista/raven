@@ -17,7 +17,7 @@ class QuoteDataclass:
 
     @classmethod
     def from_yahoo(cls, ticker, quotes, index, timestamp):
-        des_date = str(datetime.fromtimestamp(timestamp).date())
+        quote_date = str(datetime.fromtimestamp(timestamp).date())
         price_open = quotes['open'][index]
         price_close = quotes['close'][index]
         price_high = quotes['high'][index]
@@ -32,12 +32,12 @@ class QuoteDataclass:
 
         return cls(
             ticker=ticker,
-            price_open=float(price_open),
-            price_close=float(price_close),
-            price_high=float(price_high),
-            price_low=float(price_low),
+            price_open=round(float(price_open), 2),
+            price_close=round(float(price_close), 2),
+            price_high=round(float(price_high), 2),
+            price_low=round(float(price_low), 2),
             volume=int(volume),
-            date=des_date
+            date=quote_date
         )
 
     @classmethod
@@ -45,10 +45,10 @@ class QuoteDataclass:
 
         return cls(
             ticker=ticker,
-            price_open=float(stock['1. open']),
-            price_close=float(stock['4. close']),
-            price_high=float(stock['2. high']),
-            price_low=float(stock['3. low']),
+            price_open=round(float(stock['1. open']), 2),
+            price_close=round(float(stock['4. close']), 2),
+            price_high=round(float(stock['2. high']), 2),
+            price_low=round(float(stock['3. low']), 2),
             volume=int(stock['5. volume']),
             date=date,
         )

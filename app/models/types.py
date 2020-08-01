@@ -6,6 +6,11 @@ class AutoName(Enum):
         return name
 
 
+class TimeFrame(AutoName):
+    daily = auto()
+    weekly = auto()
+
+
 class Months(Enum):
     JAN = auto()
     FEV = auto()

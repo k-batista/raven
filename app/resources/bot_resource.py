@@ -5,7 +5,9 @@ from flask import Blueprint, request
 import telebot
 
 from app.services import stock_service
-from app.dataclass.stock_dataclass import StockAnalyse
+from app.models.types import TimeFrame
+from app.dataclass.stock_dataclass import StockAnalyseDataclass
+from app.utils.constants import QuoteClient
 from app.clients import count_client
 
 TOKEN = settings.TELEGRAM.TOKEN
@@ -18,7 +20,7 @@ menu = ("💎 /setups - Exibe todos os possíveis setups armados\n"
         "Ex: /stocks BBDC4 \n")
 
 
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start', 'START'])
 def start(message):
     bot.reply_to(
         message,
@@ -56,28 +58,47 @@ def analyse(message):
         gevent.spawn(count_client.count_errors)
         bot.send_message(message.chat.id, "Ação não encontrada")
         return
-    stock = StockAnalyse.build(ticker, False)
+    stock = StockAnalyseDataclass.build(
+        ticker,
+        TimeFrame.daily.value,
+        False,
+        QuoteClient.yahoo.value)
     bot.send_message(
         message.chat.id,
         stock_service.analyze(stock),
         parse_mode='HTML')
 
 
-@bot.message_handler(commands=['analyse'])
+@bot.message_handler(commands=['analyze'])
 def analyse_client(message):
-    stock = StockAnalyse.build(get_ticker('/ANALYSE', message), False)
+    stock = StockAnalyseDataclass.build(
+        get_ticker(
+            '/ANALYZE',
+            message),
+        TimeFrame.daily.value,
+        False,
+        QuoteClient.alpha.value)
     bot.send_message(
         message.chat.id,
-        stock_service.analyze(stock, client=''),
+        stock_service.analyze(stock),
         parse_mode='HTML')
 
 
-@bot.message_handler(commands=['setups'])
+@bot.message_handler(commands=['setups', 'SETUPS'])
 def setups(message):
     gevent.spawn(count_client.count_setups)
     bot.send_message(
         message.chat.id,
-        stock_service.search_setups(False),
+        stock_service.search_setups(TimeFrame.daily.value, False),
+        parse_mode='HTML')
+
+
+@bot.message_handler(commands=['setups_weekly'])
+def setups_weekly(message):
+    gevent.spawn(count_client.count_setups)
+    bot.send_message(
+        message.chat.id,
+        stock_service.search_setups(TimeFrame.weekly.value, False),
         parse_mode='HTML')
 
 

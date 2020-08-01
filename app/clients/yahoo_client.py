@@ -15,7 +15,7 @@ timeout = settings.YAHOO.TIMEOUT
 cache = ExpiringDict(max_len=100, max_age_seconds=300)
 
 
-def get_prices(ticker, date, full):
+def get_prices(request, date, full):
 
     timestamp = get_timestamp(date)
     old_timestamp = -2208988800
@@ -24,11 +24,11 @@ def get_prices(ticker, date, full):
         old_timestamp = get_timestamp(get_business_day(date, -10))
 
     url = (
-        f'{base_url}v8/finance/chart/{ticker}.SA?'
+        f'{base_url}v8/finance/chart/{request.ticker}.SA?'
         f'period1={old_timestamp}&period2={timestamp}&interval=1d')
 
     try:
-        key = f'{ticker}_price'
+        key = f'{request.ticker}_price'
         response_cache = cache.get(key)
         if response_cache:
             return response_cache
@@ -40,7 +40,7 @@ def get_prices(ticker, date, full):
 
         for index, value in enumerate(response['timestamp']):
             quote = QuoteDataclass.from_yahoo(
-                ticker, response_quotes, index, value)
+                request.ticker, response_quotes, index, value)
             if quote:
                 quotes[quote.date] = quote
 

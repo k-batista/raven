@@ -39,9 +39,8 @@ $ asdf reshim python
 - /bin/init.sh : arquivo utilitario para: iniciar aplicação/ executar lint / executar tests
 - /bin/deploy.sh : arquivo para fazer deploy no heroku
 - /bin/migrate.py : arquivo para executar alterações DDL no banco de dados
+- /bin/database : arquivos para criar o postgreSQL local
 - /config : váriaveis de ambientes, configuração de log e arquivos de DDL
-- /docker : arquivos para criar o postgreSQL local
-- /tests : arquivos de testes
 - .dockerignore : ignore do docker
 - .gitignore : ignore do git
 - Dockerfile : docker file para criar o container da aplicação
@@ -130,6 +129,11 @@ $ ./init.sh -format
 ```bash
 $ py3clean .
 ```
+
+# Configuração docker local
+sudo gedit /lib/systemd/system/docker.service
+sudo systemctl daemon-reload
+sudo service docker restart
 
 
 ## CRON 

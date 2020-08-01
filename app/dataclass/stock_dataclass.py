@@ -6,21 +6,25 @@ from dataclasses_json import dataclass_json
 
 @dataclass_json
 @dataclass
-class StockAnalyse:
+class StockAnalyseDataclass:
     ticker: str
+    time_frame: str
     send_message: bool
+    client: str
 
     @classmethod
-    def build(cls, ticker, send):
+    def build(cls, ticker, time_frame, send, client):
         return cls(
             ticker=ticker,
-            send_message=send
+            time_frame=time_frame,
+            send_message=send,
+            client=client
         )
 
 
 @dataclass_json
 @dataclass
-class StockIndicators:
+class StockIndicatorDataclass:
     ticker: str
     price_open: float
     price_close: float
@@ -28,21 +32,23 @@ class StockIndicators:
     price_low: float
     volume: int
     date: str
+    time_frame: str
     variation: float
     indicators: Dict[str, float]
 
     @classmethod
-    def build(cls, ticker, stock, date, variation, params):
+    def build(cls, request, stock, date, variation, params):
 
         return cls(
-            ticker=ticker,
+            ticker=request.ticker,
+            time_frame=request.time_frame,
             price_open=stock.price_open,
             price_close=stock.price_close,
             price_high=stock.price_high,
             price_low=stock.price_low,
             volume=stock.volume,
-            variation=variation,
             date=date,
+            variation=variation,
             indicators=params
         )
 
@@ -50,13 +56,14 @@ class StockIndicators:
     def from_model(cls, model):
         return cls(
             ticker=model.ticker,
-            price_open=model.price_open,
-            price_close=model.price_close,
-            price_high=model.price_high,
-            price_low=model.price_low,
-            volume=model.volume,
-            variation=model.variation,
-            date=model.des_date,
+            price_open=model.price_open(),
+            price_close=model.price_close(),
+            price_high=model.price_high(),
+            price_low=model.price_low(),
+            volume=model.volume(),
+            variation=model.variation(),
+            date=model.quote_date,
+            time_frame=model.time_frame,
             indicators=model.indicators
         )
 
@@ -126,13 +133,46 @@ class StockIndicators:
 
         return 0
 
+    def trend_html(self):
+        trend_str = ''
+        count_trend = self.trend()
+
+        if count_trend == 1:
+            trend_str += (f'\n* <b>Tendência: Alta</b> ' + u"\U0001F535")
+        elif count_trend == -1:
+            trend_str += (f'\n* <b>Tendência: Baixa</b> ' + u"\U0001F534")
+        else:
+            trend_str += ('\n* <b>Tendência: Indefinida</b> ')
+
+        return trend_str
+
+    def format_stock(self):
+        message = ('<b> {0:6}</b> - {13} '
+                   '\n<b> Preço </b> Abr: {1} Fch: {2} [{3} %]'
+                   '\n {5} <b>EMA 9</b> = {6:6} '
+                   '\n {7} <b>EMA 21</b> = {8:6} '
+                   '\n {9} <b>EMA 80</b> = {10:6} '
+                   '\n {11} <b>SMA 200</b> = {12:6} '
+                   .format(self.ticker,
+                           self.price_open,
+                           self.price_close,
+                           self.variation,
+                           self.get_emoji(),
+                           self.ema_9_emoji(), self.ema_9(),
+                           self.ema_21_emoji(), self.ema_21(),
+                           self.ema_80_emoji(), self.ema_80(),
+                           self.sma_200_emoji(), self.sma_200(),
+                           self.date))
+
+        return message + self.trend_html()
+
 
 @dataclass_json
 @dataclass
-class StockIndicatorsList:
-    stocks: List[StockIndicators]
+class StockIndicatorListDataclass:
+    stocks: List[StockIndicatorDataclass]
 
     @classmethod
     def build(cls, params):
-        stocks = [StockIndicators.from_model(p) for p in params]
+        stocks = [StockIndicatorDataclass.from_model(p) for p in params]
         return cls(stocks)
