@@ -18,7 +18,7 @@ def get_stock_analysis(ticker, time_frame):
         app = ApplicationContext.instance()
         stock_repository = app.stock_repository
 
-        today = str(get_end_trading_day())
+        today = str(get_end_trading_day(time_frame))
 
         stock = stock_repository.find_stock_by_ticker_and_timeframe_and_date(
             ticker, time_frame, today)
@@ -37,7 +37,7 @@ def get_stock_analysis(ticker, time_frame):
 def analyze(request: StockAnalyseDataclass):
     logging.info(f'started {request}')
     try:
-        stock = generate_stock_indicators(request, get_end_trading_day())
+        stock = generate_stock_indicators(request, get_end_trading_day(request.time_frame))
 
         return bot_service.send_stock_analyse(stock, request.send_message)
     except Exception as ex:
@@ -55,7 +55,7 @@ def search_setups(time_frame, send_message):
 
     try:
         setups = dict()
-        today = str(get_end_trading_day())
+        today = str(get_end_trading_day(time_frame))
 
         tickers = stock_repository.find_all_tickers()
 

@@ -98,6 +98,9 @@ class StockIndicatorDataclass:
     def sma_200(self):
         return self.indicators['sma_200']
 
+    def pivot_point(self):
+        return self.indicators['pivot']
+
     def trend(self):
         ema_9 = self.ema_9()
         ema_21 = self.ema_21()
@@ -138,21 +141,30 @@ class StockIndicatorDataclass:
         count_trend = self.trend()
 
         if count_trend == 1:
-            trend_str += (f'\n* <b>Tendência: Alta</b> ' + u"\U0001F535")
+            trend_str += (f'\n- <b>Tendência: Alta</b> ' + u"\U0001F535")
         elif count_trend == -1:
-            trend_str += (f'\n* <b>Tendência: Baixa</b> ' + u"\U0001F534")
+            trend_str += (f'\n- <b>Tendência: Baixa</b> ' + u"\U0001F534")
         else:
-            trend_str += ('\n* <b>Tendência: Indefinida</b> ')
+            trend_str += ('\n- <b>Tendência: Indefinida</b> ')
 
         return trend_str
 
     def format_stock(self):
         message = ('<b> {0:6}</b> - {13} '
-                   '\n<b> Preço </b> Abr: {1} Fch: {2} [{3} %]'
+                   '\n- <b>Preço </b> Abr: {1} Fch: {2} [{3} %]'
                    '\n {5} <b>EMA 9</b> = {6:6} '
                    '\n {7} <b>EMA 21</b> = {8:6} '
                    '\n {9} <b>EMA 80</b> = {10:6} '
                    '\n {11} <b>SMA 200</b> = {12:6} '
+                   '\n\n- <b>Pivot Point Fibonacci</b>'
+                   '\n {14} <b>R3</b> = {17:6} '
+                   '\n {14} <b>R2</b> = {18:6} '
+                   '\n {14} <b>R1</b> = {19:6} '
+                   '\n {15} <b>PP</b> = {20:6} '
+                   '\n {16} <b>S1</b> = {21:6} '
+                   '\n {16} <b>S2</b> = {22:6} '
+                   '\n {16} <b>S3</b> = {23:6} '
+                   '\n'
                    .format(self.ticker,
                            self.price_open,
                            self.price_close,
@@ -162,7 +174,17 @@ class StockIndicatorDataclass:
                            self.ema_21_emoji(), self.ema_21(),
                            self.ema_80_emoji(), self.ema_80(),
                            self.sma_200_emoji(), self.sma_200(),
-                           self.date))
+                           self.date,
+                           u"\U00002B06",
+                           u"\U000027A1",
+                           u"\U00002B07",
+                           self.pivot_point()['r3'],
+                           self.pivot_point()['r2'],
+                           self.pivot_point()['r1'],
+                           self.pivot_point()['pp'],
+                           self.pivot_point()['s1'],
+                           self.pivot_point()['s2'],
+                           self.pivot_point()['s3'],))
 
         return message + self.trend_html()
 

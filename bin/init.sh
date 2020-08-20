@@ -47,4 +47,4 @@ if [ "$command" = "-preload" ]; then
 fi
 
 
-gunicorn --bind 0.0.0.0:5005 --worker-class=gevent --worker-connections=1000 --workers=1 app.application:app
+gunicorn --reload --bind 0.0.0.0:5005 --worker-class=gevent --worker-connections=1000 --workers=1 app.application:app

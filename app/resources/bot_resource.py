@@ -15,8 +15,10 @@ bot = telebot.TeleBot(TOKEN)
 bp = Blueprint('bot', __name__)
 
 
-menu = ("💎 /setups - Exibe todos os possíveis setups armados\n"
-        "📊 /stocks - Exibe os indicadores diários da ação. "
+menu = ("💎 /setups - Possíveis setups armados\n"
+        "📊 /stocks - Indicadores diários da ação \n"
+        "💎 /setups_weekly - Possíveis setups semanais armados\n"
+        "📊 /stocks_weekly - Indicadores semanais da ação\n"
         "Ex: /stocks BBDC4 \n")
 
 
@@ -63,6 +65,36 @@ def analyse(message):
         TimeFrame.daily.value,
         False,
         QuoteClient.yahoo.value)
+    bot.send_message(
+        message.chat.id,
+        stock_service.analyze(stock),
+        parse_mode='HTML')
+
+
+@bot.message_handler(commands=['stocks_weekly', 'STOCKS_WEEKLY'])
+def stocks(message):
+    gevent.spawn(count_client.count_stocks)
+    ticker = get_ticker('/STOCKS_WEEKLY', message)
+
+    if ticker:
+        analyse_weekly(message)
+    else:
+        sent = bot.send_message(message.chat.id,
+                                "🔍 Envia a ação. Exemplo:  BBDC4  ou  VVAR3")
+        bot.register_next_step_handler(sent, analyse_weekly)
+
+
+def analyse_weekly(message):
+    ticker = get_ticker('/STOCKS_WEEKLY', message)
+    if not ticker or len(ticker) < 3:
+        gevent.spawn(count_client.count_errors)
+        bot.send_message(message.chat.id, "Ação não encontrada")
+        return
+    stock = StockAnalyseDataclass.build(
+        ticker,
+        TimeFrame.weekly.value,
+        False,
+        QuoteClient.alpha.value)
     bot.send_message(
         message.chat.id,
         stock_service.analyze(stock),

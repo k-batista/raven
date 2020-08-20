@@ -68,13 +68,15 @@ def resource_analyze():
     app = ApplicationContext.instance()
 
     time_frame = extract_time_frame(request_json['time_frame'])
+    client = (request_json.get('client')
+              if request_json.get('client') else 'yahoo')
 
     for ticker in request_json['stocks']:
         stock = stock_dc.StockAnalyseDataclass.build(
             ticker,
             time_frame,
             request_json['send_message'],
-            'alpha')
+            client)
         app.put_queue(stock)
 
     return (

@@ -61,6 +61,17 @@ setup_factory.add('Possível Setup 9.2 de Compra',
                 and stock_3_ema_9 > stock_4_ema_9
                 """)
 
+
+setup_factory.add('Cruzamento EMA9 x EMA21 - Possivel Compra',
+                  """ stock_0_ema_9 > stock_0_ema_21
+                and stock_1_ema_9 < stock_1_ema_21
+                and stock_2_ema_9 < stock_2_ema_21
+                and stock_3_ema_9 < stock_3_ema_21
+                and stock_4_ema_9 < stock_4_ema_21
+                and stock_5_ema_9 < stock_5_ema_21
+                """)
+
+
 setup_factory.add('Possível Setup 9.1 de Venda',
                   """ stock_0_price_close <= stock_0_ema_9
                 and stock_0_price_close < stock_0_price_open
@@ -118,4 +129,13 @@ setup_factory.add('Possível PC de Venda',
                 and stock_3_price_close < stock_0_ema_21
                 and stock_4_price_close < stock_0_ema_21
                 and stock_5_price_close < stock_0_ema_21
+                """)
+
+setup_factory.add('Cruzamento EMA9 x EMA21 - Possivel Venda',
+                  """ stock_0_ema_9 < stock_0_ema_21
+                and stock_1_ema_9 > stock_1_ema_21
+                and stock_2_ema_9 > stock_2_ema_21
+                and stock_3_ema_9 > stock_3_ema_21
+                and stock_4_ema_9 > stock_4_ema_21
+                and stock_5_ema_9 > stock_5_ema_21
                 """)

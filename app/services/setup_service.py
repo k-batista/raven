@@ -19,8 +19,8 @@ def generate_setup_values(list_stock, today):
     stocks = dict()
     for key, stock in enumerate(list_stock):
         if stock.quote_date == str(today):
-           stock_update = True
-        
+            stock_update = True
+
         if not stock.ema_9() or not stock.ema_21():
             stock_update = True
             break

@@ -2,10 +2,23 @@ import time
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
+from app.models.types import TimeFrame
 
-def get_end_trading_day():
+def get_last_week_business_day(date):
+    if date.weekday() != 5:
+        while date.weekday() != 5:
+            date += relativedelta(days=-1)
+    
+    return get_business_day(date)
+
+def get_end_trading_day(time_frame):
+
     today = date.today()
     now = datetime.now()
+
+    if time_frame == TimeFrame.weekly.value:
+        return get_last_week_business_day(today)
+
 
     if today.weekday() in (5, 6):
         while not _is_business_day(today):
@@ -92,4 +105,3 @@ HOLIDAYS = frozenset(_parse_isoformat_date(d) for d in (
 
 ))
 
-get_end_trading_day()

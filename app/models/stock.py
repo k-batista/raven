@@ -57,3 +57,6 @@ class Stock(Base):
 
     def sma_200(self):
         return self.indicators['sma_200']
+
+    def pivot_point(self):
+        return self.indicators['pivot']

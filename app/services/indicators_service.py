@@ -3,6 +3,7 @@ from datetime import datetime
 
 from app.config.app_context import ApplicationContext
 from app.utils.business_days import get_business_day
+from app.utils.business_days import get_last_week_business_day
 from app.models.stock import Stock
 from app.dataclass.stock_dataclass import StockIndicatorDataclass
 from app.services.indicators import StockIndicator
@@ -10,7 +11,6 @@ from app.services.indicators import StockIndicator
 
 def generate_stock_indicators(request, date):
     stock_repository = ApplicationContext.instance().stock_repository
-
     stock = stock_repository.find_stock_by_ticker_and_timeframe_and_date(
         request.ticker, request.time_frame, str(date))
 
@@ -20,17 +20,22 @@ def generate_stock_indicators(request, date):
     indicator = StockIndicator(request, date)
     stock = (__create_stock_daily(request, date, indicator)
              if request.time_frame == 'daily'
-             else __create_stock_weekly(request, indicator))
+             else __create_stock_weekly(request, date, indicator))
 
     return StockIndicatorDataclass.from_model(stock)
 
 
-def __create_stock_weekly(request, indicator):
+def __create_stock_weekly(request, date, indicator):
     stock_repository = ApplicationContext.instance().stock_repository
+
     count = 0
     for key, value in indicator.reverse_prices.items():
         if count == 7:
             break
+
+        key_date = datetime.strptime(key, '%Y-%m-%d').date()
+        if key_date > date:
+            continue
 
         count += 1
 
@@ -39,11 +44,11 @@ def __create_stock_weekly(request, indicator):
 
         if not stock:
             dataclass = __create_stock(
-                request, datetime.strptime(
-                    key, '%Y-%m-%d').date(), indicator)
+                request,key_date, indicator)
             stock = stock_repository.create(Stock.from_dataclass(dataclass))
 
-    return stock
+    return stock_repository.find_stock_by_ticker_and_timeframe_and_date(
+            request.ticker, request.time_frame, str(date))
 
 
 def __create_stock_daily(request, date, indicator):
@@ -69,12 +74,12 @@ def __create_stock(request, date, indicator):
     return StockIndicatorDataclass.build(
         request, price, date_str, __get_variation(
             price, price_old), {
-            'ema_9': indicator.get_ema(
-                9, date_str), 'ema_21': indicator.get_ema(
-                    21, date_str), 'ema_80': indicator.get_ema(
-                        80, date_str), 'sma_9': indicator.get_sma(
-                            9, date_str), 'sma_200': indicator.get_sma(
-                                200, date_str)})
+            'ema_9': indicator.get_ema(9, date_str),
+            'ema_21': indicator.get_ema(21, date_str),
+            'ema_80': indicator.get_ema(80, date_str),
+            'sma_9': indicator.get_sma(9, date_str),
+            'sma_200': indicator.get_sma(200, date_str),
+            **indicator.generate_pivot_point(date_str)})
 
 
 def __get_price_old(indicator, request, date):
@@ -98,11 +103,11 @@ def __get_price_old(indicator, request, date):
             if stock:
                 break
 
-        return stock
+        return stock.price_close
 
-    return indicator.get_price_by_date(yesterday)
+    return indicator.get_price_by_date(yesterday).price_close
 
 
 def __get_variation(current, old):
     return round(
-        (((current.price_close * 100) / old.price_close) - 100), 2)
+        (((current.price_close * 100) / old) - 100), 2)

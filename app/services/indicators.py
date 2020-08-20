@@ -73,3 +73,31 @@ class StockIndicator:
         emas = self.__ema(period)
 
         return emas.get(date)
+
+    def generate_pivot_point(self, quotation_date):
+        quote = self.get_price_by_date(quotation_date)
+
+        pp = round(
+            (quote.price_close +
+             quote.price_low +
+             quote.price_high) /
+            3,
+            2)
+        high_less_low = (quote.price_high - quote.price_low)
+        r3 = round(pp + high_less_low, 2)
+        r2 = round(pp + (high_less_low * 0.618), 2)
+        r1 = round(pp + (high_less_low * 0.382), 2)
+
+        s1 = round(pp - (high_less_low * 0.382), 2)
+        s2 = round(pp - (high_less_low * 0.618), 2)
+        s3 = round(pp - high_less_low, 2)
+
+        return dict(
+            pivot=dict(
+                pp=pp,
+                r3=r3,
+                r2=r2,
+                r1=r1,
+                s1=s1,
+                s2=s2,
+                s3=s3))

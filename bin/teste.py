@@ -97,3 +97,7 @@ tickers = ["ABEV3", "AMAR3", "AZUL4", "B3SA3", "BBAS3",
 
 from datetime import datetime
 print(datetime.strptime('2020-07-31', '%Y-%m-%d').date())
+
+# print(eval(" 1 == 'A' and ( round(1000.00) + round(1000.00) == (1000.00 * 2 + 2000 - 2000) and 'PF' == 'PF'"))
+
+print({f'teste{i}': i for i in range(10)})
