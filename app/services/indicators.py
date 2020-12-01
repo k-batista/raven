@@ -77,6 +77,9 @@ class StockIndicator:
     def generate_pivot_point(self, quotation_date):
         quote = self.get_price_by_date(quotation_date)
 
+        if not quote:
+            return dict()
+            
         pp = round(
             (quote.price_close +
              quote.price_low +

@@ -94,14 +94,15 @@ def __get_price_old(indicator, request, date):
         return float(stock.price_close())
 
     if request.time_frame == 'weekly':
-        end_week = get_business_day(date, -1)
+        end_week = get_business_day(date, 0)
 
         for day in range(5):
-            end_week = get_business_day(end_week, -1)
             stock = indicator.get_price_by_date(str(end_week))
 
             if stock:
                 break
+
+            end_week = get_business_day(end_week, -1)
 
         return stock.price_close
 
@@ -109,5 +110,8 @@ def __get_price_old(indicator, request, date):
 
 
 def __get_variation(current, old):
+    if not current:
+        return 0
+
     return round(
         (((current.price_close * 100) / old) - 100), 2)
