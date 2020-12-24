@@ -46,7 +46,7 @@ data = {
 schema_avro = """{
   "type": "record",
   "name": "LoanLimitTest",
-  "namespace": "br.com.uol..loan.avro",
+  "namespace": "br.com...loan.avro",
   "fields": [
     {
       "name": "IDT_MESSAGE",
@@ -269,8 +269,8 @@ def send_record():
     key_schema, value_schema = load_avro_schema_from_file()
 
     producer_config = {
-        "bootstrap.servers": 'kafka.qa-aws.intranet..uol:9092',
-        "schema.registry.url": 'http://schema-registry.qa-aws.intranet..uol:8081'
+        "bootstrap.servers": 'kafka.qa-aws.intranet..:9092',
+        "schema.registry.url": 'http://schema-registry.qa-aws.intranet..:8081'
     }
 
     producer = AvroProducer(producer_config, default_key_schema=key_schema, default_value_schema=value_schema)
