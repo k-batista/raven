@@ -4,8 +4,8 @@ EXEC_OPTION=$1
 SCRIPT_DIR=$(dirname $0)
 SOURCE_DIR=$(pwd)
 
-set -euo pipefail
-IFS=$'\n\t'
+# set -euo pipefail
+# IFS=$'\n\t'
 
 IMAGE_DB_NAME=postgres-raven
 CONTAINER_DB_NAME=postgres-raven-container

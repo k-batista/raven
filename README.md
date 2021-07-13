@@ -64,14 +64,13 @@ $ sudo chmod +x init.sh
 ## Criação do banco de dados
 
 ```bash
-$ docker/start_local_database.sh 
+$ ./bin/databse/start_local_database.sh 
 ```
 
 Para somente criar o container do banco de dados execute:
 
 ```bash
-$ docker/start_local_database.sh build_image
-
+$ ./bin/databse/start_local_database.sh build_image
 ```
 
 Para somente executar as migration execute 

@@ -32,8 +32,8 @@ def get_prices(request, date, full):
         response_cache = cache.get(key)
         if response_cache:
             return response_cache
-
-        response = (http_caller.get(url=url, timeout=timeout, parse_json=True)
+        
+        response = (http_caller.get(url=url,headers={'User-Agent':''}, timeout=timeout, parse_json=True)
                     ['chart']['result'][0])
         response_quotes = response['indicators']['quote'][0]
         quotes = dict()
