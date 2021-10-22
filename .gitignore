@@ -12,8 +12,5 @@
 **/*local.py
 **/local.py
 **/htmlcov/**
-**/.vscode
-.vscode/
-venv/
 jenkins/
 reports/
