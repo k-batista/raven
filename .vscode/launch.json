@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: API",
-            "pythonPath": "/home/kbatista/main/workspace/k-batista/raven/venv/bin/python3",
+            "python": "/home/kbatista/main/workspace/k-batista/raven/venv/bin/python3",
             "type": "python",
             "request": "launch",
             "gevent": true,
